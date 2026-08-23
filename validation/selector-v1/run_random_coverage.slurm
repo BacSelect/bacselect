@@ -7,18 +7,6 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(
-    cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &&
-    pwd
-)"
-
-REPO_ROOT="$(
-    cd -- "$SCRIPT_DIR/../.." &&
-    pwd
-)"
-
-cd "$REPO_ROOT"
-
 fail() {
     printf 'FAIL | %s\n' "$*" >&2
     exit 1
@@ -30,8 +18,20 @@ command -v git >/dev/null 2>&1 ||
 command -v conda >/dev/null 2>&1 ||
     fail "conda not found"
 
+[[ -n "${BACSELECT_REPO_ROOT:-}" ]] ||
+    fail "BACSELECT_REPO_ROOT is not set"
+
 [[ -n "${BACSELECT_RANDOM_OUTPUT_DIR:-}" ]] ||
     fail "BACSELECT_RANDOM_OUTPUT_DIR is not set"
+
+REPO_ROOT="$(
+    realpath "$BACSELECT_REPO_ROOT"
+)"
+
+[[ -d "$REPO_ROOT/.git" ]] ||
+    fail "BACSELECT_REPO_ROOT is not a Git repository: $REPO_ROOT"
+
+cd "$REPO_ROOT"
 
 HEAD_COMMIT="$(git rev-parse HEAD)"
 ORIGIN_MAIN="$(git rev-parse origin/main)"
