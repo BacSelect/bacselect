@@ -63,3 +63,11 @@ def test_frozen_random_baseline_configuration() -> None:
     assert config["random_species_order"] == "species_tie_key"
     assert config["random_genome_order"] == "genome_tie_key"
     assert config["random_max_n"] == "500"
+    assert (
+        config["random_species_draw"]
+        == "Generator.choice(replace=False,shuffle=True)"
+    )
+    assert (
+        config["random_genome_draw"]
+        == "one_Generator.integers_per_sampled_species_including_singletons"
+    )

@@ -23,3 +23,5 @@ random_replicate_protocol	single_generator_sequential_replicates
 random_species_order	species_tie_key
 random_genome_order	genome_tie_key
 random_max_n	500
+random_species_draw	Generator.choice(replace=False,shuffle=True)
+random_genome_draw	one_Generator.integers_per_sampled_species_including_singletons

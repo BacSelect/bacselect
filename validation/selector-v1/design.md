@@ -276,6 +276,17 @@ For each replicate:
    ordered eligible members;
 4. use the first N genomes for N = 10, 20, 50, 100, 200, and 500.
 
+To freeze generator-state evolution exactly:
+
+- make the species draw with one
+  `Generator.choice(species_count, size=500, replace=False, shuffle=True)`
+  call;
+- then, in sampled-species order, make exactly one
+  `Generator.integers(low=0, high=n_s)` call for every sampled species;
+- make that genome-index draw even when `n_s = 1`, so singleton species consume
+  generator state in the same way as all other selected species;
+- make no additional random draws while constructing a replicate ladder.
+
 The deterministic input ordering is computational only. It does not alter the
 uniform sampling probabilities and does not use species names, TaxID numeric
 magnitude, biological metadata, or downstream results.
