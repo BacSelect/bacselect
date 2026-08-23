@@ -393,7 +393,26 @@ For every N and metric, report:
 - random median;
 - random 2.5th percentile;
 - random 97.5th percentile;
-- empirical rank among the 1,000 random replicates.
+- empirical rank relative to the 1,000 random replicates.
+
+All coverage metrics are lower-is-better.
+
+For candidate metric value c and random replicate values r_j, define the
+candidate empirical rank as:
+
+    rank(c) = 1 + count(r_j < c)
+
+The rank therefore ranges from 1 to 1001.
+
+Rank 1 means no random replicate has a strictly lower metric value than the
+candidate. Rank 1001 means all 1,000 random replicates have strictly lower
+metric values.
+
+Exact ties do not count as better random outcomes. Candidates tied at the same
+value therefore receive the same competition rank.
+
+The empirical rank is descriptive validation evidence and is not an additional
+selector decision rule.
 
 No candidate is accepted merely because it beats a single random panel.
 

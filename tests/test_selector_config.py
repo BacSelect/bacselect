@@ -71,3 +71,7 @@ def test_frozen_random_baseline_configuration() -> None:
         config["random_genome_draw"]
         == "one_Generator.integers_per_sampled_species_including_singletons"
     )
+    assert (
+        config["random_empirical_rank"]
+        == "1_plus_count_random_strictly_lower_range_1_to_1001"
+    )
