@@ -273,6 +273,49 @@ Every genome receives evaluation weight:
 
 Therefore every species contributes equal total evaluation weight.
 
+## Quantile convention
+
+All validation medians and percentiles use the empirical inverse cumulative
+distribution function with no interpolation.
+
+For observations x_i with positive weights w_i, define total weight:
+
+    W = sum_i w_i
+
+For quantile q, sort observations by increasing value and define:
+
+    Q(q) = min{x : sum_{i: x_i <= x} w_i >= q * W}
+
+Exact tied values therefore remain a single empirical threshold. No value is
+interpolated between adjacent observations.
+
+For species-balanced genome-level coverage metrics, use the exact evaluation
+weights:
+
+    w_i = 1 / n_s
+
+and compare cumulative weights using the exact rational quantile thresholds:
+
+- median: q = 1 / 2
+- 95th percentile: q = 19 / 20
+
+The primary weighted 95th percentile is therefore the smallest observed
+nearest-panel Euclidean distance within which at least 95% of total
+species-balanced evaluation weight lies.
+
+For unweighted summaries across species, assign every species weight 1 and use
+the same inverse-ECDF convention.
+
+For random-baseline summaries across the 1,000 replicate metric values, assign
+every replicate weight 1 and use the same convention, with:
+
+- 2.5th percentile: q = 1 / 40
+- median: q = 1 / 2
+- 97.5th percentile: q = 39 / 40
+
+This evaluation-quantile convention is separate from the midpoint percentile
+transform used to construct the species-balanced architecture geometry.
+
 ## Primary coverage metric
 
 The primary metric is the species-balanced weighted 95th percentile of

@@ -15,3 +15,6 @@ identity_blinding	REQUIRED
 input_order_invariance	REQUIRED
 byte_identical_rebuild	REQUIRED
 project_finch_panel_used_for_tuning	NO
+quantile_methodempirical_inverse_cdf_no_interpolation
+weighted_quantile_weightsexact_1_over_species_genome_count
+quantile_thresholdsmedian=1/2,p95=19/20,p2.5=1/40,p97.5=39/40
