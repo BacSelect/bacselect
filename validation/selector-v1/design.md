@@ -102,7 +102,21 @@ A stable identity-neutral tie key is derived from:
 
 The hash is used only after scientific selection scores are exactly tied.
 
-The tie key is never interpreted as a scientific variable.
+For an exact tie between species-level SR scores, use the species-level tie key:
+
+    SHA256(
+        "BacSelect-selector-v1|species|" +
+        "\n".join(sorted(canonical_accessions_in_species))
+    )
+
+The species-level key is calculated from the complete set of eligible canonical
+accessions assigned to that species in the frozen validation universe. It does
+not use the species name, TaxID numeric magnitude, biological metadata, or
+downstream results.
+
+The genome-level and species-level tie keys are used only after the applicable
+scientific selection scores are exactly tied. Neither tie key is interpreted
+as a scientific variable.
 
 ## Panel sizes
 
@@ -170,9 +184,13 @@ Calculate the global centroid giving each species centroid equal weight.
 
 Choose the species whose centroid is nearest that global centroid.
 
+Resolve an exact tie between species using the frozen species-level SHA-256
+tie key.
+
 Within that species, choose the genome nearest the global centroid.
 
-Resolve exact ties using the frozen SHA-256 tie key.
+Resolve an exact tie between genomes using the frozen genome-level SHA-256
+tie key.
 
 This two-stage rule prevents a heavily sampled species from gaining more
 opportunities to supply the first genome merely because it contains more
@@ -185,12 +203,17 @@ Maintain the nearest-panel squared distance for every eligible genome.
 At each step:
 
 1. calculate the mean current nearest-panel squared distance separately for
-   each species;
-2. choose the species with the largest mean residual distance;
-3. within that species, choose the genome with the largest current
-   nearest-panel squared distance;
-4. resolve exact ties using the frozen SHA-256 tie key;
-5. update nearest-panel distances.
+   each species, using all eligible genomes in that species, including any
+   already selected genomes at nearest-panel distance zero;
+2. restrict species-level competition to species containing at least one
+   previously unselected genome;
+3. choose the species with the largest mean residual distance;
+4. within that species, choose the previously unselected genome with the
+   largest current nearest-panel squared distance;
+5. resolve an exact species-score tie using the frozen species-level
+   SHA-256 tie key and an exact genome-score tie using the frozen genome-level
+   SHA-256 tie key;
+6. update nearest-panel distances.
 
 Because every species contributes one species-level residual score regardless
 of its number of deposited genomes, species abundance does not directly
