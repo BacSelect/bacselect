@@ -255,7 +255,33 @@ Master random seed:
 
     20260824
 
-Random generation must use a recorded algorithm and software version.
+The random baseline uses NumPy Generator with the PCG64 bit generator.
+
+One Generator(PCG64(20260824)) instance is initialized for the complete
+validation run. The 1,000 replicate ladders are then generated sequentially
+from that single generator state.
+
+Before random sampling:
+
+1. order species groups by the frozen species-level SHA-256 tie key;
+2. within each species, order eligible genomes by the frozen genome-level
+   SHA-256 tie key.
+
+For each replicate:
+
+1. sample 500 species uniformly without replacement from that deterministic
+   species ordering;
+2. preserve the sampled species order as the nested random ladder;
+3. for each sampled species, sample one genome uniformly from its deterministically
+   ordered eligible members;
+4. use the first N genomes for N = 10, 20, 50, 100, 200, and 500.
+
+The deterministic input ordering is computational only. It does not alter the
+uniform sampling probabilities and does not use species names, TaxID numeric
+magnitude, biological metadata, or downstream results.
+
+The NumPy version and complete software environment used for validation must
+be recorded with the random-baseline outputs.
 
 Random baseline identities remain blinded during selector evaluation.
 

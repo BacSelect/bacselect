@@ -15,6 +15,11 @@ identity_blinding	REQUIRED
 input_order_invariance	REQUIRED
 byte_identical_rebuild	REQUIRED
 project_finch_panel_used_for_tuning	NO
-quantile_methodempirical_inverse_cdf_no_interpolation
-weighted_quantile_weightsexact_1_over_species_genome_count
-quantile_thresholdsmedian=1/2,p95=19/20,p2.5=1/40,p97.5=39/40
+quantile_method	empirical_inverse_cdf_no_interpolation
+weighted_quantile_weights	exact_1_over_species_genome_count
+quantile_thresholds	median=1/2,p95=19/20,p2.5=1/40,p97.5=39/40
+random_rng	numpy.random.Generator(PCG64)
+random_replicate_protocol	single_generator_sequential_replicates
+random_species_order	species_tie_key
+random_genome_order	genome_tie_key
+random_max_n	500
