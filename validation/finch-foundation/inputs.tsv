@@ -1,0 +1,4 @@
+artifact	path	sha256	data_rows	notes
+corrected_raw_structural_feature_matrix	/NGS/scratch/EXT/Rhys_wkdir/project-finch/experiment-0/corrected-eligible-percentile-feature-space/corrected-eligible-structural-feature-matrix.tsv	fd264bedda627d737a647de601c8b835f53baeca246724e9aafb73fd50c9d656	55306	12 raw structural features
+corrected_percentile_feature_matrix	/NGS/scratch/EXT/Rhys_wkdir/project-finch/experiment-0/corrected-eligible-percentile-feature-space/corrected-eligible-percentile-feature-matrix.tsv	b898b1079f766c58cdbdd66dede9776ec49db6a59452d5f3c82052b704a719a3	55306	Project Finch percentile feature space
+corrected_species_mapping	/NGS/scratch/EXT/Rhys_wkdir/project-finch/experiment-0/corrected-species-resolution/corrected-genome-species-taxid.tsv	f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c	55306	13765 distinct species groups
