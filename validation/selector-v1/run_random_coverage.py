@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import runpy
+import subprocess
 import sys
 import time
 from dataclasses import fields
@@ -61,6 +62,19 @@ def file_sha256(path: Path) -> str:
             digest.update(block)
 
     return digest.hexdigest()
+
+
+def git_stdout(repo_root: Path, *args: str) -> str:
+    """Return stripped stdout from one Git command."""
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    return completed.stdout.strip()
 
 
 def ladder_matrix_sha256(
@@ -167,6 +181,21 @@ def main() -> None:
     ]
 
     repo_root = Path(__file__).resolve().parents[2]
+
+    git_commit = git_stdout(
+        repo_root,
+        "rev-parse",
+        "HEAD",
+    )
+
+    git_worktree_clean = not bool(
+        git_stdout(
+            repo_root,
+            "status",
+            "--porcelain",
+        )
+    )
+
     env_lock_path = (
         repo_root
         / "envs"
@@ -183,6 +212,12 @@ def main() -> None:
     print(
         "PASS | frozen environment lock | "
         f"{env_lock_hash}"
+    )
+
+    print(
+        f"repository | "
+        f"commit={git_commit} | "
+        f"worktree_clean={str(git_worktree_clean).lower()}"
     )
 
     print(
@@ -425,6 +460,11 @@ def main() -> None:
         "p2.5=1/40,median=1/2,p97.5=39/40",
         f"python_version\t{sys.version.split()[0]}",
         f"numpy_version\t{np.__version__}",
+        f"git_commit\t{git_commit}",
+        (
+            "git_worktree_clean\t"
+            f"{str(git_worktree_clean).lower()}"
+        ),
         (
             "environment_lock\t"
             "envs/bacselect-dev-linux-64.lock"
