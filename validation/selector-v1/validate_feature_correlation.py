@@ -318,14 +318,12 @@ def main() -> None:
             "correlation matrix is not symmetric"
         )
 
-    if not np.allclose(
+    if not np.array_equal(
         np.diag(correlation),
         np.ones(len(EXPECTED_FEATURES)),
-        rtol=0.0,
-        atol=1e-15,
     ):
         raise AssertionError(
-            "correlation matrix diagonal is not unity"
+            "correlation matrix diagonal is not exactly unity"
         )
 
     output_hash = write_matrix(

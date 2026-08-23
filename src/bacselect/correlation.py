@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import Sequence
 
 import numpy as np
@@ -13,7 +14,12 @@ def spearman_correlation_matrix(
     values: Sequence[Sequence[float]]
     | npt.NDArray[np.floating],
 ) -> npt.NDArray[np.float64]:
-    """Return the complete column-wise Spearman correlation matrix."""
+    """Return an exactly symmetric column-wise Spearman matrix.
+
+    Each unique feature pair is evaluated once. The resulting coefficient
+    is written to both symmetric matrix positions. The diagonal is exactly
+    one by definition.
+    """
     matrix = np.asarray(values, dtype=np.float64)
 
     if matrix.ndim != 2:
@@ -38,43 +44,29 @@ def spearman_correlation_matrix(
             "Spearman correlation is undefined for constant columns"
         )
 
-    result = spearmanr(
-        matrix,
-        axis=0,
-        nan_policy="raise",
-    )
+    column_count = matrix.shape[1]
 
-    correlation = np.asarray(
-        result.statistic,
+    correlation = np.eye(
+        column_count,
         dtype=np.float64,
     )
 
-    column_count = matrix.shape[1]
+    for left in range(column_count):
+        for right in range(left + 1, column_count):
+            result = spearmanr(
+                matrix[:, left],
+                matrix[:, right],
+                nan_policy="raise",
+            )
 
-    # scipy.stats.spearmanr returns a scalar when exactly two
-    # variables are supplied.
-    if column_count == 2 and correlation.ndim == 0:
-        rho = float(correlation)
-        correlation = np.asarray(
-            [
-                [1.0, rho],
-                [rho, 1.0],
-            ],
-            dtype=np.float64,
-        )
+            rho = float(result.statistic)
 
-    if correlation.shape != (
-        column_count,
-        column_count,
-    ):
-        raise AssertionError(
-            "unexpected Spearman correlation matrix shape: "
-            f"{correlation.shape}"
-        )
+            if not math.isfinite(rho):
+                raise ValueError(
+                    "Spearman correlation produced a non-finite value"
+                )
 
-    if not np.all(np.isfinite(correlation)):
-        raise ValueError(
-            "Spearman correlation produced non-finite values"
-        )
+            correlation[left, right] = rho
+            correlation[right, left] = rho
 
     return correlation

@@ -70,3 +70,34 @@ No dimension is removed solely because it is correlated with another.
 
 Any sensitivity to individual or grouped dimensions is evaluated separately
 by the pre-specified leave-one-feature-out and grouped-ablation analyses.
+
+## Implementation correction before matrix freeze
+
+The first execution of the frozen implementation calculated the correlation
+matrix in memory but stopped before writing an output artifact because the
+validator required exact binary symmetry.
+
+The multivariate SciPy result was mathematically symmetric but differed between
+28 mirrored off-diagonal positions at binary64 round-off scale. The maximum
+absolute asymmetry was:
+
+`1.1102230246251565e-16`
+
+The maximum diagonal deviation from one was also:
+
+`1.1102230246251565e-16`
+
+The matrix was symmetric with absolute tolerance `1e-15`.
+
+No correlation-matrix artifact was written by that attempt and no individual
+correlation coefficients were displayed or inspected.
+
+Before producing the first matrix artifact, the implementation was therefore
+made canonical: each of the 66 unique feature pairs is evaluated exactly once
+with `scipy.stats.spearmanr`, that single coefficient is written to both
+symmetric matrix positions, and the diagonal is set exactly to one.
+
+This correction does not introduce a new statistic, weighting scheme,
+threshold, or interpretation rule. It implements the same pre-specified
+pairwise Spearman correlation definition while producing an exactly symmetric
+canonical output matrix.
