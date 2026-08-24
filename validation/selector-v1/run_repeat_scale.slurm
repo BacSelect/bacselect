@@ -248,11 +248,11 @@ if [[ "$LIVE_ENV_LOCK_SHA256" != "$EXPECTED_ENV_LOCK_SHA256" ]]; then
 fi
 
 
-ENV_PREFIX="$("$CONDA" run -n "$ENV_NAME" python3 - <<'PY'
-import os
-import sys
-print(os.path.dirname(os.path.dirname(sys.executable)))
-PY
+ENV_PREFIX="$(
+    "$CONDA" run \
+        -n "$ENV_NAME" \
+        python3 -c \
+        'import os; print(os.environ["CONDA_PREFIX"])'
 )"
 
 if [[ -z "$ENV_PREFIX" || ! -d "$ENV_PREFIX" ]]; then

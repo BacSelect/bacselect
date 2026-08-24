@@ -320,3 +320,23 @@ def test_anchor_features_are_derived_from_150_and_400_only() -> None:
             "canonical_400mer_fraction"
         ): 0.08,
     }
+
+
+def test_slurm_environment_prefix_resolution_is_noninteractive_safe() -> None:
+    wrapper = (
+        REPO
+        / "validation"
+        / "selector-v1"
+        / "run_repeat_scale.slurm"
+    ).read_text(encoding="utf-8")
+
+    start = wrapper.index('ENV_PREFIX="$(')
+    end = wrapper.index(
+        'if [[ -z "$ENV_PREFIX"',
+        start,
+    )
+    block = wrapper[start:end]
+
+    assert "python3 -c" in block
+    assert 'os.environ["CONDA_PREFIX"]' in block
+    assert "python3 - <<" not in block
