@@ -136,6 +136,23 @@ if [[ "$HEAD_COMMIT" != "$ORIGIN_MAIN" ]]; then
     exit 1
 fi
 
+if [[ -z "${BACSELECT_EXPECTED_COMMIT:-}" ]]; then
+    echo "ERROR | BACSELECT_EXPECTED_COMMIT is not set"
+    exit 1
+fi
+
+if ! [[ "$BACSELECT_EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "ERROR | BACSELECT_EXPECTED_COMMIT is not a full Git commit"
+    exit 1
+fi
+
+if [[ "$HEAD_COMMIT" != "$BACSELECT_EXPECTED_COMMIT" ]]; then
+    echo "ERROR | repository moved after production submission"
+    echo "expected=$BACSELECT_EXPECTED_COMMIT"
+    echo "observed=$HEAD_COMMIT"
+    exit 1
+fi
+
 OUTPUT_ROOT="$OUTPUT_BASE/$HEAD_COMMIT/production"
 
 
