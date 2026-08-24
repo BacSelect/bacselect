@@ -58,6 +58,88 @@ def remove_feature_column(
     )
 
 
+def remove_feature_columns(
+    coordinates: Sequence[Sequence[float]]
+    | npt.NDArray[np.floating],
+    feature_indices: Sequence[int],
+) -> npt.NDArray[np.float64]:
+    """Return coordinates with a specified set of feature columns removed."""
+    matrix = np.asarray(
+        coordinates,
+        dtype=np.float64,
+    )
+
+    if matrix.ndim != 2:
+        raise ValueError(
+            "coordinates must be a two-dimensional matrix"
+        )
+
+    if matrix.shape[0] == 0:
+        raise ValueError(
+            "coordinates must contain at least one row"
+        )
+
+    if matrix.shape[1] < 2:
+        raise ValueError(
+            "coordinates must contain at least two columns"
+        )
+
+    if not np.all(np.isfinite(matrix)):
+        raise ValueError(
+            "coordinates must contain only finite numbers"
+        )
+
+    try:
+        raw_indices = list(feature_indices)
+    except TypeError as exc:
+        raise TypeError(
+            "feature_indices must be a sequence of integers"
+        ) from exc
+
+    if not raw_indices:
+        raise ValueError(
+            "feature_indices must not be empty"
+        )
+
+    if any(
+        isinstance(value, (bool, np.bool_))
+        or not isinstance(value, (int, np.integer))
+        for value in raw_indices
+    ):
+        raise TypeError(
+            "feature_indices must contain only integers"
+        )
+
+    indices = [
+        int(value)
+        for value in raw_indices
+    ]
+
+    if len(set(indices)) != len(indices):
+        raise ValueError(
+            "feature_indices must contain unique indices"
+        )
+
+    if any(
+        index < 0 or index >= matrix.shape[1]
+        for index in indices
+    ):
+        raise ValueError(
+            "feature index is out of range"
+        )
+
+    if len(indices) >= matrix.shape[1]:
+        raise ValueError(
+            "at least one feature column must remain"
+        )
+
+    return np.delete(
+        matrix,
+        sorted(indices),
+        axis=1,
+    )
+
+
 def panel_overlap_count(
     reference_panel: Sequence[int]
     | npt.NDArray[np.integer],
