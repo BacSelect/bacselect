@@ -1,0 +1,10 @@
+name: bacselect-repeat
+
+channels:
+  - conda-forge
+  - bioconda
+
+dependencies:
+  - python=3.10.20
+  - gxx=15.3.0
+  - libdivsufsort=2.0.2
