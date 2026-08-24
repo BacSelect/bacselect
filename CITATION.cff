@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: >-
+  BacSelect is under prospective development. Cite the scientific release
+  record once a validated BacSelect release is available.
+title: BacSelect
+type: software
+authors:
+  - family-names: White
+    given-names: Rhys
+repository-code: https://github.com/BacSelect/bacselect
+url: https://bacselect.github.io
+license: MIT

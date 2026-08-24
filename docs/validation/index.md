@@ -33,7 +33,7 @@ An attractive result in one analysis is not enough to freeze the design.
 ## Where is the evidence?
 
 Detailed prospective methods, frozen outputs and interpretation records are kept
-under [`validation/selector-v1/`](../../validation/selector-v1/).
+under [`validation/selector-v1/`](https://github.com/BacSelect/bacselect/tree/main/validation/selector-v1).
 
 The [scientific specification](../scientific-specification.md) states which
 questions must be resolved before BacSelect v1.0.

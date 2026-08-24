@@ -23,9 +23,26 @@ nav:
       - Nested panels: concepts/nested-panels.md
   - How BacSelect works:
       - Overview: methods/overview.md
+      - Mathematics: methods/mathematics.md
       - Scientific specification: scientific-specification.md
   - Validation: validation/index.md
-  - Releases: releases/index.md
+  - Releases:
+      - Overview: releases/index.md
+      - Reproducibility: releases/reproducibility.md
+  - Decisions:
+      - Overview: decisions/index.md
+      - GenBank GCA identity: decisions/0001-genbank-gca-identity.md
+      - Structural selection: decisions/0002-structural-selection.md
+      - Species-balanced geometry: decisions/0003-species-balanced-geometry.md
+      - Nested panels: decisions/0004-nested-panels.md
+      - Immutable releases: decisions/0005-immutable-releases.md
+      - Fail-closed releases: decisions/0006-fail-closed-releases.md
   - Reference:
       - Glossary: reference/glossary.md
       - FAQ: reference/faq.md
+      - Further reading: reference/further-reading.md
+      - Citation: reference/citation.md
+  - Development:
+      - Setup: development/setup.md
+      - Testing: development/testing.md
+      - Code architecture: development/architecture.md
