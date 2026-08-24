@@ -74,3 +74,28 @@ BacSelect selector-v1 defines its candidate k values prospectively in
 Alternative-scale calculations must not proceed unless the BacSelect
 reference-scale concordance gate reproduces the existing frozen 150-bp and
 400-bp features for all 55,306 corrected eligible genomes.
+
+## Source loading for reference-scale concordance
+
+BacSelect also vendors without modification the Project Finch source loader
+used for the selector-v1 reference-scale concordance gate.
+
+`experiment-0/compute_structural_features.py`
+
+SHA-256:
+
+`e4d76a44731000dc8330d6f3289aca76ce6562329dd371f6f63ec090ab42db50`
+
+`experiment-0/basic_structural_features.py`
+
+SHA-256:
+
+`30bc3f52fdf68cf7b6433262935b3ed2bb189b256672687bea56f3a4f4cc043a`
+
+The loader verifies the audit-selected genomic FASTA, sequence-report file,
+Primary Assembly component membership, component sequence hashes, lengths,
+and recorded topology before a sequence is supplied to the repeat engine.
+
+The concordance target universe is derived from the corrected 55,306-genome
+BacSelect foundation rather than the original 55,420-genome Project Finch
+structural-feature target set.
