@@ -10,37 +10,28 @@ The intended workflow is simple: choose a panel size, **N**, and obtain a
 deterministic, versioned set of complete bacterial genomes selected to span
 genome architecture within a defined public source universe.
 
-## Documentation
+## Start here
 
-### Start here
+If you want to understand or use BacSelect without writing code:
 
-For users who want to understand what BacSelect does and why.
+- [Getting started](getting-started.md)
+- [Choosing N](choosing-n.md)
+- [Frequently asked questions](reference/faq.md)
 
-### Concepts
+## Understand the design
 
-Plain-language explanations of the source universe, genome architecture,
-species balancing, structural distance and nested panels.
+- [Core concepts](concepts/index.md)
+- [How BacSelect works](methods/overview.md)
+- [Scientific specification](scientific-specification.md)
 
-### Methods
+## Evidence and reproducibility
 
-How BacSelect moves from a frozen public genome universe to a validated panel.
+- [Validation](validation/index.md)
+- [Releases](releases/index.md)
 
-### Validation
+## Reference
 
-The prospective evidence used to decide which methods become part of
-BacSelect v1.
-
-### Releases
-
-How monthly snapshots, versioning, provenance and reproducibility will work.
-
-### Decisions
-
-Why important scientific and technical choices were made.
-
-### Reference
-
-Glossary, file formats, further reading and technical reference material.
+- [Glossary](reference/glossary.md)
 
 ## Current status
 
@@ -48,6 +39,3 @@ BacSelect remains under prospective development.
 
 No scientific BacSelect panel has yet been released. The selector,
 architecture schema and release workflow remain subject to validation.
-
-For exact current rules and open decisions, see the
-[scientific specification](scientific-specification.md).

@@ -11,6 +11,9 @@ theme:
 
 nav:
   - Home: index.md
+  - Start here:
+      - Getting started: getting-started.md
+      - Choosing N: choosing-n.md
   - Core concepts:
       - Overview: concepts/index.md
       - Source universe: concepts/source-universe.md
@@ -18,4 +21,11 @@ nav:
       - Species balancing: concepts/species-balancing.md
       - Structural distance: concepts/distance-and-coverage.md
       - Nested panels: concepts/nested-panels.md
-  - Scientific specification: scientific-specification.md
+  - How BacSelect works:
+      - Overview: methods/overview.md
+      - Scientific specification: scientific-specification.md
+  - Validation: validation/index.md
+  - Releases: releases/index.md
+  - Reference:
+      - Glossary: reference/glossary.md
+      - FAQ: reference/faq.md
