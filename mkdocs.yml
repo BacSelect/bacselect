@@ -1,0 +1,21 @@
+site_name: BacSelect
+site_description: Bacterial genome diversity, at the scale you need.
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Core concepts:
+      - Overview: concepts/index.md
+      - Source universe: concepts/source-universe.md
+      - Genome architecture: concepts/genome-architecture.md
+      - Species balancing: concepts/species-balancing.md
+      - Structural distance: concepts/distance-and-coverage.md
+      - Nested panels: concepts/nested-panels.md
+  - Scientific specification: scientific-specification.md
