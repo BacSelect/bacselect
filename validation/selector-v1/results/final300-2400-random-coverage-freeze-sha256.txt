@@ -1,0 +1,5 @@
+d86d572c22931c4440edceda25b17de2a02f586309611dc497b70dcdbb1a2c5f  validation/selector-v1/results/final300-2400-random-coverage-replicates.tsv
+a1e0bf78d4be461a0de74ea8a06e103ccfeaafd394308b7ffe580f9cce96efda  validation/selector-v1/results/final300-2400-random-coverage-summary.tsv
+7ada89bc210a561f29a9957180695395b6f8e4253d6d4e05268c3bdf9707c63a  validation/selector-v1/results/final300-2400-random-coverage-provenance.json
+f009a033bc91140a7817ee3fd9f5fefe18afdab6f60244d681769150edea5a31  validation/selector-v1/results/final300-2400-random-coverage-sha256.txt
+6aacf800336974437089ea50d712e934ee48b3a3595edf7f5bc1591de71b9ebc  validation/selector-v1/results/final300-2400-random-coverage-freeze.md
