@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "FIRST_EXECUTION_FAILED_BEFORE_SEQUENCE_VALIDATION",
+  "production_commit": "b172cd104cc81113b1da862abadc6245c6dd9f76",
+  "array_job_id": 2505883,
+  "aggregate_job_id": 2505884,
+  "failed_batches_observed": 4,
+  "failed_node": "kscprod-bio2",
+  "validated_replacement_node": "kscprod-bio8",
+  "failure_stage": "datasets_dehydrated_download_before_zip",
+  "failure_class": "dataset_report_tcp_connection_reset",
+  "sequence_validation_reached": false,
+  "selector_outcome_generated": false,
+  "target_set_changed": false,
+  "batch_size_changed": false,
+  "array_concurrency_changed": false,
+  "datasets_version_changed": false,
+  "acquisition_arguments_changed": false,
+  "corrections": [
+    "pin_array_to_kscprod_bio8",
+    "archive_recorded_failed_pre_zip_partial_before_fresh_retry"
+  ],
+  "node_diagnostic": {
+    "kscprod-bio2": "DOWNLOAD_FAILED",
+    "kscprod-bio8": "DOWNLOAD_OK"
+  },
+  "concurrent_500_accession_diagnostic_on_kscprod_bio8": {
+    "batch_001": "DOWNLOAD_OK",
+    "batch_002": "DOWNLOAD_OK"
+  }
+}
