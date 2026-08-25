@@ -1,0 +1,23 @@
+field	value
+schema_version	1
+datasets_version	18.35.0
+datasets_explicit_lock_sha256	6d965c7c4f7db0464e4fba2434f85f1b7da3f7136790babca444888b6e6096cd
+taxon	2
+assembly_source	GenBank
+assembly_level	complete
+assembly_version_query	current
+required_returned_assembly_status	current
+mag	exclude
+exclude_multi_isolate	true
+exclude_all_atypical	false
+automatic_warning_exclusion_1	chimeric
+automatic_warning_exclusion_2	contaminated
+automatic_warning_exclusion_3	mixed culture
+warning_normalization	strip_ascii_whitespace_then_unicode_casefold
+canonical_accession_regex	^GCA_[0-9]+\.[0-9]+$
+biosample_regex	^(SAMN[0-9]+|SAMEA[0-9]+|SAMD[0-9]+)$
+repeated_biosample_identical_representative	lexicographically_smallest_canonical_GCA
+repeated_biosample_nonidentical	withhold_unresolved
+novel_chromosome_integrity_trigger	withhold_unresolved
+feature_repeat_scale_short	300
+feature_repeat_scale_long	2400

@@ -1,0 +1,7 @@
+name: bacselect-ncbi-datasets
+
+channels:
+  - conda-forge
+
+dependencies:
+  - ncbi-datasets-cli=18.35.0

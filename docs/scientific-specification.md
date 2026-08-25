@@ -121,11 +121,13 @@ The raw NCBI assembly metadata response is retained unchanged as release
 provenance.
 
 The discovery query uses the NCBI Datasets `--assembly-version current`
-setting. In the returned assembly metadata, the assembly status must be
-`latest`; `replaced` and `suppressed` assemblies are not eligible.
+setting. In the returned assembly metadata,
+`assemblyInfo.assemblyStatus` must be exactly `current`; `previous`,
+`suppressed`, deprecated `retired`, unknown, missing, and unrecognized
+statuses are not eligible.
 
-The distinction between query terminology (`current`) and returned assembly
-status (`latest`) must be covered by validation tests.
+The query setting and returned assembly status must be covered by validation
+tests.
 
 The exact NCBI Datasets version, command, retrieval timestamp, source hashes,
 and relevant environment information are recorded for every release.
@@ -154,14 +156,17 @@ not itself grounds for exclusion.
 Warnings that establish that the assembly does not represent a single,
 structurally interpretable bacterial genome may exclude a candidate.
 
-The initial automatic exclusion set is intended to include:
+The automatic exclusion set is:
 
-- chimeric;
-- contaminated;
-- mixed culture.
+- `chimeric`;
+- `contaminated`;
+- `mixed culture`.
 
-The exact accepted warning strings must be frozen from the NCBI schema before
-production implementation.
+NCBI atypical warning strings are normalized by stripping leading and trailing
+ASCII whitespace and applying Unicode `casefold()` before exact comparison.
+No punctuation or internal whitespace is rewritten. Other atypical warnings
+are retained unless another explicit BacSelect eligibility rule excludes the
+candidate.
 
 ## BioSample requirement and repeated BioSamples
 
@@ -265,13 +270,13 @@ Finch:
 3. replicon count;
 4. non-chromosomal replicon count;
 5. non-chromosomal sequence fraction;
-6. non-unique canonical 150-mer fraction;
-7. non-unique canonical 400-mer fraction;
-8. maximum canonical 150-mer multiplicity;
-9. maximum canonical 400-mer multiplicity;
+6. non-unique canonical 300-mer fraction;
+7. non-unique canonical 2400-mer fraction;
+8. maximum canonical 300-mer multiplicity;
+9. maximum canonical 2400-mer multiplicity;
 10. longest exact repeat length;
-11. inter-replicon shared canonical 150-mer fraction;
-12. inter-replicon shared canonical 400-mer fraction.
+11. inter-replicon shared canonical 300-mer fraction;
+12. inter-replicon shared canonical 2400-mer fraction.
 
 Canonical k-mers treat a sequence and its reverse complement as equivalent.
 
