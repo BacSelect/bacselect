@@ -545,13 +545,19 @@ def full12_ladders(
     )
 
     ops_hash = ladder_hash(
-        "BacSelect-selector-v1|OPS|ladder|N=500",
+        (
+            "BacSelect-selector-v1|"
+            "final300-2400|OPS|ladder|N=500"
+        ),
         ops,
         accessions,
     )
 
     sr_hash = ladder_hash(
-        "BacSelect-selector-v1|SR|ladder|N=500",
+        (
+            "BacSelect-selector-v1|"
+            "final300-2400|SR|ladder|N=500"
+        ),
         sr,
         accessions,
     )

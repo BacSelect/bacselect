@@ -78,6 +78,7 @@ done
 RUNNER="validation/selector-v1/run_final_grouped_ablation.py"
 WRAPPER="validation/selector-v1/run_final_grouped_ablation.slurm"
 METHOD="validation/selector-v1/final-grouped-ablation-method.md"
+CORRECTION="validation/selector-v1/final-grouped-ablation-correction.md"
 ENV_LOCK="envs/bacselect-dev-linux-64.lock"
 INPUT_MANIFEST="validation/selector-v1/final-feature-space-inputs.tsv"
 REFERENCE_METRICS="validation/selector-v1/results/final300-2400-ops-vs-sr-metrics.tsv"
@@ -86,6 +87,7 @@ for input in \
     "$RUNNER" \
     "$WRAPPER" \
     "$METHOD" \
+    "$CORRECTION" \
     "$ENV_LOCK" \
     "$INPUT_MANIFEST" \
     "$REFERENCE_METRICS"
@@ -106,6 +108,11 @@ WRAPPER_SHA256="$(
 
 METHOD_SHA256="$(
     sha256sum "$METHOD" |
+        awk '{print $1}'
+)"
+
+CORRECTION_SHA256="$(
+    sha256sum "$CORRECTION" |
         awk '{print $1}'
 )"
 
@@ -148,6 +155,7 @@ printf 'memory\t%s\n' "${SLURM_MEM_PER_NODE:-unknown}"
 printf 'runner_sha256\t%s\n' "$RUNNER_SHA256"
 printf 'wrapper_sha256\t%s\n' "$WRAPPER_SHA256"
 printf 'method_sha256\t%s\n' "$METHOD_SHA256"
+printf 'correction_sha256\t%s\n' "$CORRECTION_SHA256"
 printf 'env_lock_sha256\t%s\n' "$ENV_LOCK_SHA256"
 printf 'input_manifest_sha256\t%s\n' "$INPUT_MANIFEST_SHA256"
 printf 'reference_metrics_sha256\t%s\n' "$REFERENCE_METRICS_SHA256"
@@ -201,6 +209,7 @@ fi
     printf 'runner_sha256\t%s\n' "$RUNNER_SHA256"
     printf 'wrapper_sha256\t%s\n' "$WRAPPER_SHA256"
     printf 'method_sha256\t%s\n' "$METHOD_SHA256"
+    printf 'correction_sha256\t%s\n' "$CORRECTION_SHA256"
     printf 'env_lock_sha256\t%s\n' "$ENV_LOCK_SHA256"
     printf 'input_manifest_sha256\t%s\n' "$INPUT_MANIFEST_SHA256"
     printf 'reference_metrics_sha256\t%s\n' "$REFERENCE_METRICS_SHA256"
