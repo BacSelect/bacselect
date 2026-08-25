@@ -1,0 +1,3 @@
+ffd4bb04f913df3d658b591739f3ad876c24d9a8d795242c926c97987dffce4e  src/bacselect/source_membership.py
+6e29f0c59524612b84081a350e6f0ba566ff96cee842edd091caadbbf48b1422  tests/test_source_membership.py
+6b78c7b1dbf2b32e8400212768ca74facbed0ffd856634a2134f25617b756d99  validation/selector-v1/prospective-baseline-membership-schema-refinement.md
