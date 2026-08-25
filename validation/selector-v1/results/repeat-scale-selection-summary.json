@@ -1,0 +1,56 @@
+{
+  "analysis": "selector-v1-repeat-scale-selection",
+  "analysis_commit": "3c77cd33902bde25571aa4c04ab8d2e528bbec97",
+  "array_sha256": {
+    "distance_matrix_float64_c_order": "c198f68a39d1526eb38a079a0c227dd00c28bfc4babb298044296d2ffb01cfe3",
+    "percentile_values_float64_c_order": "4b9da24839d2b4a9e5b361511cfcfa9f415d67c24afcad33c75777f0f0076a5c",
+    "raw_values_float64_c_order": "85526951115c3dc6e51a96bfce8fa9f143ccd588abad6852eed2ccce26559484"
+  },
+  "genomes": 55306,
+  "inherited_pair_150_400": {
+    "maximum_nearest_distance": 0.2660464094870586,
+    "mean_nearest_distance": 0.1035710924240693,
+    "rank": 59
+  },
+  "input_sha256": {
+    "full_universe_audit_summary": "40ce0b77936d69c039474256c904f16cb204ec4040f05c190619708547dc6dc1",
+    "production_files_manifest": "75fd427a28b712b1c76ebe93722d2c6baac1e3d1bccedf63a00de71bebea5b84",
+    "repeat_scale_method": "2897282450221e662bb1d6c1142da7c999e07e23c21d66f265cbf2fe13313d01",
+    "repeat_scale_module": "7dcd0cab3da9698ca4a697315326bc303e30c96d3b3ed12e48b627287a3b6f6c",
+    "species_mapping": "f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c"
+  },
+  "k_values": [
+    50,
+    75,
+    100,
+    150,
+    200,
+    300,
+    400,
+    600,
+    800,
+    1200,
+    1600,
+    2400,
+    3200
+  ],
+  "outputs": {
+    "distance_matrix_sha256": "97c2395dc13fbb98c5b3689b5a7d7e0ebdd0803c51fd5afa1ee75320c55e27f6",
+    "pair_scores_sha256": "b868cdc33f6835a8b41d2a860cc4dedc9978955e95fb240fd96d7b4cb5f91e9f"
+  },
+  "production_commit": "83516de6cd3713415e78502ba58db072fa6b38f9",
+  "repeat_feature_families": [
+    "non_unique_fraction",
+    "maximum_multiplicity",
+    "inter_replicon_shared_fraction"
+  ],
+  "schema_version": 1,
+  "selected_pair": {
+    "k_a": 300,
+    "k_b": 2400,
+    "maximum_nearest_distance": 0.16255877925735962,
+    "mean_nearest_distance": 0.0891272863055269
+  },
+  "selected_pair_differs_from_inherited": true,
+  "species": 13765
+}
