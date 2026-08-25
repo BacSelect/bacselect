@@ -1,0 +1,4 @@
+artifact	path	sha256	data_rows	notes
+final_raw_structural_feature_matrix	/NGS/scratch/EXT/Rhys_wkdir/bacselect/selector-v1/final-feature-space/0f75c51edc37259f168ad10faf44d536dd9b75a5/structural-feature-matrix-300-2400.tsv	86c0c3d49317dfc3cc452114e3863666fe2112b6a3ae8dae2090b60a2a598948	55306	Final selector-v1 12-feature raw matrix; selected repeat scales 300/2400
+final_species_balanced_percentile_feature_matrix	/NGS/scratch/EXT/Rhys_wkdir/bacselect/selector-v1/final-feature-space/0f75c51edc37259f168ad10faf44d536dd9b75a5/species-balanced-percentile-feature-matrix-300-2400.tsv	f48e20b28ee89988e7abb42488a35c62fbfa4a538c15c8d2d70b6b5ba7ae83c1	55306	Final selector-v1 species-balanced percentile feature matrix
+corrected_species_mapping	/NGS/scratch/EXT/Rhys_wkdir/project-finch/experiment-0/corrected-species-resolution/corrected-genome-species-taxid.tsv	f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c	55306	13765 distinct species groups

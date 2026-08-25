@@ -1,0 +1,60 @@
+{
+  "analysis": "selector-v1-final-feature-space-300-2400",
+  "array_sha256": {
+    "raw_float64_c_order": "2a0dbd5809fa4d5d77ab6e2d5255ddec9bb933a94be6c270260ec81758d8cbd6",
+    "species_balanced_percentile_float64_c_order": "9a4a120562ff1151fd8c83e831eb81362b2372844f7dd7407746554af49cda67"
+  },
+  "features": [
+    "01_total_genome_length",
+    "02_whole_genome_gc_fraction",
+    "03_replicon_count",
+    "04_non_chromosomal_replicon_count",
+    "05_non_chromosomal_sequence_fraction",
+    "06_non_unique_canonical_300mer_fraction",
+    "07_non_unique_canonical_2400mer_fraction",
+    "08_maximum_canonical_300mer_multiplicity",
+    "09_maximum_canonical_2400mer_multiplicity",
+    "10_longest_exact_repeat_length",
+    "11_inter_replicon_shared_canonical_300mer_fraction",
+    "12_inter_replicon_shared_canonical_2400mer_fraction"
+  ],
+  "genomes": 55306,
+  "input_sha256": {
+    "geometry_module": "fbebf436d049be063817b717878330f38e09b3e7cb79f9dbc1b8f704af6a0d69",
+    "historical_raw_150_400": "fd264bedda627d737a647de601c8b835f53baeca246724e9aafb73fd50c9d656",
+    "repeat_scale_full_universe_audit_summary": "40ce0b77936d69c039474256c904f16cb204ec4040f05c190619708547dc6dc1",
+    "repeat_scale_production_manifest": "75fd427a28b712b1c76ebe93722d2c6baac1e3d1bccedf63a00de71bebea5b84",
+    "repeat_scale_selection_summary": "beced81273c05bf039d6630ea2b173ce4485bdd4042546c781ee64aa2a785bcf",
+    "species_mapping": "f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c"
+  },
+  "outputs": {
+    "percentile_matrix_sha256": "f48e20b28ee89988e7abb42488a35c62fbfa4a538c15c8d2d70b6b5ba7ae83c1",
+    "raw_matrix_sha256": "86c0c3d49317dfc3cc452114e3863666fe2112b6a3ae8dae2090b60a2a598948",
+    "row_audit_sha256": "2155a672c676f99e546909ab4bedf1245c953ccadf82276be75303bcf121fcc7"
+  },
+  "permutation_seed": 20260825,
+  "production_commit": "83516de6cd3713415e78502ba58db072fa6b38f9",
+  "replaced_features": [
+    "06_non_unique_canonical_300mer_fraction",
+    "07_non_unique_canonical_2400mer_fraction",
+    "08_maximum_canonical_300mer_multiplicity",
+    "09_maximum_canonical_2400mer_multiplicity",
+    "11_inter_replicon_shared_canonical_300mer_fraction",
+    "12_inter_replicon_shared_canonical_2400mer_fraction"
+  ],
+  "repository_commit": "0f75c51edc37259f168ad10faf44d536dd9b75a5",
+  "schema_version": 1,
+  "selected_repeat_scales": [
+    300,
+    2400
+  ],
+  "species": 13765,
+  "unchanged_features": [
+    "01_total_genome_length",
+    "02_whole_genome_gc_fraction",
+    "03_replicon_count",
+    "04_non_chromosomal_replicon_count",
+    "05_non_chromosomal_sequence_fraction",
+    "10_longest_exact_repeat_length"
+  ]
+}
