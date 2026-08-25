@@ -1,0 +1,1 @@
+2584fddf1f06562d48abd990372ec70ea1f48da0962b1f710afb1d93e2c3223a  validation/selector-v1/prospective-selector-resolution-design.md
