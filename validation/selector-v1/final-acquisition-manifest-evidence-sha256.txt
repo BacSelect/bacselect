@@ -1,0 +1,2 @@
+e4f4c354f5a78f4efc123eede2dbee475440785fa72cc59d233b4406e64103bc  validation/selector-v1/final-acquisition-manifest-evidence.json
+7b21f073e8248d599afc81134a1c15a37c4428d6c9ed7745b89107a155166057  validation/selector-v1/final-acquisition-manifest-evidence.md

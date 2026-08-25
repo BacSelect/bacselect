@@ -1,0 +1,33 @@
+{
+  "acquisition_plan_summary_sha256": "3cd28008a355f487aedf4e2c833f078cab27a3580acb1650777312630eae83f3",
+  "baseline_membership_used_for_acquisition_partition": false,
+  "cache_reuse": 55151,
+  "cache_reuse_accessions_sha256": "75cfaef4461fd2729eba79067b6aa69a53e570993a9ec4665208b50dab915c51",
+  "cache_reuse_manifest_sha256": "32a61975f99b973c3e7a2f58ac98beafe7b63c437c4bf0e3f7f51872680faff1",
+  "cache_verification_sha256": "7b2fa38ff2c1f43fc0536cabfa68091fdde9d4d3677092d49405bbac113fd752",
+  "cached_historical_sequence_eligibility_counts": {
+    "eligible": 55145,
+    "ineligible": 6
+  },
+  "final_fresh_batch_size": 326,
+  "fresh_acquisition_reason_counts": {
+    "not_in_historical_cache": 15326
+  },
+  "fresh_batch_index_sha256": "2a52f7ba3b23867bfe85078b47b840e5a1e240b09187d130fb0578087b483c4a",
+  "fresh_batch_size": 500,
+  "fresh_batches": 31,
+  "fresh_download_accessions_sha256": "fb6a1ca5bfea391beb761c2c28dd0baa520115ab7a31a31411a73ef121fe5899",
+  "fresh_download_manifest_sha256": "1c9a73231d6b8ebfed76fb60621616588a4f51b1144e5d7880f14ddf26d1863b",
+  "fresh_downloads": 15326,
+  "genome_sequence_downloaded": false,
+  "historical_candidate_audits_manifest_sha256": "e6aad9f3adef78f8ce12228eee7d61d801643dd3cfbf11087f41b76c3bad7d37",
+  "identity_bearing_manifests_committed": false,
+  "metadata_retained": 70477,
+  "network_access_during_manifest_build": false,
+  "production_commit": "a8f045506ac4a3f17034cd9170867995a87eb894",
+  "raw_source_sha256": "b1b016891ae4e976d03606dfb2f35f74b03d21cf3ec82832f77f4d113bd622d5",
+  "schema_version": 1,
+  "selector_identity_or_distance_consumed": false,
+  "source_records": 70850,
+  "status": "FINAL_ACQUISITION_MANIFESTS_COMPLETE"
+}
