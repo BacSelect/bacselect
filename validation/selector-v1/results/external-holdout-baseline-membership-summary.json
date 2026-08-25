@@ -1,0 +1,7 @@
+{
+  "baseline_accessions": 55306,
+  "baseline_not_in_metadata_retained": 274,
+  "metadata_retained": 70477,
+  "retained_absent_from_baseline": 15445,
+  "retained_present_in_baseline": 55032
+}
