@@ -1,0 +1,87 @@
+{
+  "ag": {
+    "ladder_sha256": "a1df33566be62cdff70d6d0722815eef65193d8d4bca698a613beb38e3c8ccd7"
+  },
+  "analysis": "selector-v1-final-300-2400-geometry-baselines",
+  "analysis_commit": "6efbce9fdcd5e40914fd6adcbed1ab8123cbbeee",
+  "array_sha256": {
+    "percentile_float64_c_order": "9a4a120562ff1151fd8c83e831eb81362b2372844f7dd7407746554af49cda67",
+    "raw_float64_c_order": "2a0dbd5809fa4d5d77ab6e2d5255ddec9bb933a94be6c270260ec81758d8cbd6"
+  },
+  "coverage_decision_evaluated": false,
+  "features": [
+    "01_total_genome_length",
+    "02_whole_genome_gc_fraction",
+    "03_replicon_count",
+    "04_non_chromosomal_replicon_count",
+    "05_non_chromosomal_sequence_fraction",
+    "06_non_unique_canonical_300mer_fraction",
+    "07_non_unique_canonical_2400mer_fraction",
+    "08_maximum_canonical_300mer_multiplicity",
+    "09_maximum_canonical_2400mer_multiplicity",
+    "10_longest_exact_repeat_length",
+    "11_inter_replicon_shared_canonical_300mer_fraction",
+    "12_inter_replicon_shared_canonical_2400mer_fraction"
+  ],
+  "genomes": 55306,
+  "input_sha256": {
+    "environment_lock": "f6f4a19c44a759705682ba4199207eaef5c2435e1b6feeddc1e4654686bc2a8c",
+    "final_feature_space_manifest": "512d466ff6b8af3e51eb91db715d5fc5c76995892a4c1b18489d922a0414f0f2",
+    "final_percentile_matrix": "f48e20b28ee89988e7abb42488a35c62fbfa4a538c15c8d2d70b6b5ba7ae83c1",
+    "final_raw_matrix": "86c0c3d49317dfc3cc452114e3863666fe2112b6a3ae8dae2090b60a2a598948",
+    "species_mapping": "f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c"
+  },
+  "max_n": 500,
+  "module_sha256": {
+    "src/bacselect/ag.py": "cc9d2e6e94bb4dbe9baa145d691d0578999c8936fbbec0d5c086e2a486d2d9ee",
+    "src/bacselect/correlation.py": "7c0311391cb7ce997ad341b79ce78ba3a9841fb17358e497700b44b077e0ea79",
+    "src/bacselect/geometry.py": "fbebf436d049be063817b717878330f38e09b3e7cb79f9dbc1b8f704af6a0d69",
+    "src/bacselect/ops.py": "eb6c1b8edab3e694b0f3825bb5ab0eaf44fdd95fdbb6a6e3e41439c18c828c0f",
+    "src/bacselect/random_baseline.py": "55d45c8ab19f33fefebe0025dfb0a6890f7fdbef479aaf1c6634508ac5c5e679",
+    "src/bacselect/sr.py": "7d3faf8a89605599e2306eea8d2d56ad690c4a588897b7446983a60e0729693b",
+    "src/bacselect/tie.py": "a5746d3d40e3d267398f80eb83ab2f4b1ee84808f3d9a7715dade7fc0824f73e"
+  },
+  "ops": {
+    "ladder_sha256": "ab5d75b2d35b9577bcf84acceb8e10d847e983e04a8e4aa5859fd0bde1ae2834",
+    "representative_count": 13765,
+    "representative_sha256": "0d10a37be3af5e8f487226103ff75c5f87905ddd7aef412d0956848307f9151e"
+  },
+  "outputs": {
+    "feature_correlation_sha256": "56a666965adc51dee18a41118eeb6300ad3c7c3db1f93f2ee439154af26bf26f",
+    "species_abundance_diagnostic_sha256": "c6669de3fa32986d2c4fc847edc264f351747ac8bb95ba4dc058d5ed0205396c"
+  },
+  "panel_sizes": [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500
+  ],
+  "permutation_seed": 20260824,
+  "random": {
+    "ladder_set_sha256": "9394a26ded92fb2baafea0101b837335e9d434f4cd3d8c6484ef61bbf0741719",
+    "matches_frozen_membership_baseline": true,
+    "max_n": 500,
+    "replicates": 1000,
+    "seed": 20260824
+  },
+  "runtimes_seconds": {
+    "ag_ladder": 2.684814232168719,
+    "feature_correlation": 0.4809812980238348,
+    "ops_ladder": 3.7416948780883104,
+    "ops_representatives": 3.0271567408926785,
+    "random_ladders": 0.9748873738572001,
+    "sr_ladder": 40.11456407699734
+  },
+  "schema_version": 1,
+  "software": {
+    "numpy": "2.4.6",
+    "python": "3.11.16",
+    "scipy": "1.17.1"
+  },
+  "species": 13765,
+  "sr": {
+    "ladder_sha256": "080cbaf23d9259610d59fc1ef5a3164329e0bbbe9016b21590c0b34ad2da1b97"
+  }
+}
