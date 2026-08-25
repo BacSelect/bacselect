@@ -1,0 +1,7 @@
+00fababd5bb86b3a2945ea01c5a45ae82a9b0bcc7ccb6a4acb43ad5a00e0eda0  validation/selector-v1/audit_repeat_scale_full_universe.py
+40ce0b77936d69c039474256c904f16cb204ec4040f05c190619708547dc6dc1  validation/selector-v1/results/repeat-scale-full-universe-audit-summary.json
+7e1d4a6927b01b5b9f97383f786ab8a1981e7218f87ebfc150ab60e4b8db2488  validation/selector-v1/results/repeat-scale-full-universe-batch-audit.tsv
+2e0b41354cd1f2bd01451e6d99f055152dea0c1bc7de1707aef957ef9bba8828  validation/selector-v1/results/repeat-scale-full-universe-candidate-audit.tsv
+51cfd463b6af8a57b3380487f986abf10f137073e9be453e44a7e9a5b4c0e72b  validation/selector-v1/results/repeat-scale-full-universe-errors.txt
+75fd427a28b712b1c76ebe93722d2c6baac1e3d1bccedf63a00de71bebea5b84  validation/selector-v1/results/repeat-scale-full-universe-production-files.sha256
+ee0143e5f606bba18a2e7340feb263fa8d0b9f0cd7263f678d9eb09be647dae5  validation/selector-v1/results/repeat-scale-full-universe-freeze.md
