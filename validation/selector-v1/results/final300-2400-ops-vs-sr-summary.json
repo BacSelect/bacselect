@@ -1,0 +1,43 @@
+{
+  "analysis": "selector-v1-final-300-2400-ops-vs-sr",
+  "analysis_commit": "ea547dbe7eeffbd5ce426c7ca5cb4347d8a1bc9d",
+  "automatic_primary_winner": null,
+  "frozen_ladder_sha256": {
+    "OPS": "ab5d75b2d35b9577bcf84acceb8e10d847e983e04a8e4aa5859fd0bde1ae2834",
+    "SR": "080cbaf23d9259610d59fc1ef5a3164329e0bbbe9016b21590c0b34ad2da1b97"
+  },
+  "new_decision_criterion_introduced": false,
+  "outputs": {
+    "metrics_sha256": "9cd2cc838cb74a044e356a1a418633ef2bdc89c4e9f71f924e4c1c0a79073388",
+    "primary_sha256": "18349c559862cdb35a2453c1dd97c9b3f6e844ff0665e4c7b0ba79a019bf6211"
+  },
+  "panel_sizes": [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500
+  ],
+  "primary_metric": "weighted_p95",
+  "primary_rule": "automatic winner only if the same candidate has lower weighted_p95 at all six frozen panel sizes",
+  "primary_status": "PRIMARY_CURVES_NOT_UNIFORMLY_ORDERED",
+  "runtimes_seconds": {
+    "coverage_evaluation": 3.8960919070523232,
+    "foundation_and_ladders": 93.04198734392412
+  },
+  "schema_version": 1,
+  "secondary_interpretation_evaluated": false,
+  "secondary_metrics": [
+    "weighted_mean",
+    "weighted_median",
+    "weighted_p95",
+    "unweighted_max",
+    "median_species_mean",
+    "p95_species_mean",
+    "max_species_mean",
+    "median_species_max",
+    "p95_species_max",
+    "max_species_max"
+  ]
+}
