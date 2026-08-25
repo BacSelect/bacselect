@@ -1,0 +1,3 @@
+9ca17ddbc6435936f4e500a07ec0c9b97971978e07b704e8acdc496f4d070c91  src/bacselect/source_sequence_plan.py
+72e5e7a62874af466dcf3e4955b4e80d1505e9300464fb208207fcf18c80d03b  tests/test_source_sequence_plan.py
+4112c9af91ae138bd9bcb9123badfff30f5b7e1e98c87d9ed738e5601994467f  validation/selector-v1/prospective-cache-reuse-sequence-acquisition-design.md
