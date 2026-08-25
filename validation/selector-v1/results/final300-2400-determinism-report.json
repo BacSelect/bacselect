@@ -1,0 +1,52 @@
+{
+  "analysis": "selector-v1-final-deterministic-rebuild",
+  "array_sha256": {
+    "raw_float64_c_order": "2a0dbd5809fa4d5d77ab6e2d5255ddec9bb933a94be6c270260ec81758d8cbd6",
+    "recomputed_percentile_float64_c_order": "9a4a120562ff1151fd8c83e831eb81362b2372844f7dd7407746554af49cda67"
+  },
+  "features": [
+    "01_total_genome_length",
+    "02_whole_genome_gc_fraction",
+    "03_replicon_count",
+    "04_non_chromosomal_replicon_count",
+    "05_non_chromosomal_sequence_fraction",
+    "06_non_unique_canonical_300mer_fraction",
+    "07_non_unique_canonical_2400mer_fraction",
+    "08_maximum_canonical_300mer_multiplicity",
+    "09_maximum_canonical_2400mer_multiplicity",
+    "10_longest_exact_repeat_length",
+    "11_inter_replicon_shared_canonical_300mer_fraction",
+    "12_inter_replicon_shared_canonical_2400mer_fraction"
+  ],
+  "genomes": 55306,
+  "identity_blinding": "REQUIRED",
+  "input_sha256": {
+    "environment_lock": "f6f4a19c44a759705682ba4199207eaef5c2435e1b6feeddc1e4654686bc2a8c",
+    "manifest": "512d466ff6b8af3e51eb91db715d5fc5c76995892a4c1b18489d922a0414f0f2",
+    "raw_file": "86c0c3d49317dfc3cc452114e3863666fe2112b6a3ae8dae2090b60a2a598948",
+    "reference_metrics": "9cd2cc838cb74a044e356a1a418633ef2bdc89c4e9f71f924e4c1c0a79073388",
+    "species_mapping": "f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c"
+  },
+  "numpy": "2.4.6",
+  "panel_sizes": [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500
+  ],
+  "python": "3.11.16",
+  "reference_ladder_sha256": {
+    "OPS": "c81d9fd30cda2d49f0f6c81d4bf99dace9fff811c7612036d9265ef90707fa13",
+    "SR": "3c703f5f898e0a13c6eb8568c0b83f5b0d19d4e374155d2d3a8a4e20378bd51f"
+  },
+  "schema_version": 1,
+  "scientific_output_sha256": {
+    "coverage": "a276043636b64dd6d508aa48a414a9da63a474719f47018cb8d890d65dc3771a",
+    "ladders": "c0f17aaa2c92c27f0b4f3aebd9ffd1be73cc403c80700b93a1b2d5786fb6b0da",
+    "percentile_matrix": "4676b33ffd7f16084a2c37751cc5ede35ba9966b1860e339cd007e96fbb0684a"
+  },
+  "selector_decision_rule_introduced": false,
+  "species": 13765
+}
