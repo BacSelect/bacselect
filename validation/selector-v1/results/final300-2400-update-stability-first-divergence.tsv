@@ -1,0 +1,15 @@
+scenario	selector	first_divergence_rank	stage	baseline_choice_present	baseline_choice_candidate	selected_primary_score	baseline_primary_score	selected_secondary_score	baseline_secondary_score	score_relation	reason
+add_general_500	OPS	15	maximin	YES	NO	1.3415295515542214				not_comparable	baseline_choice_not_species_representative
+add_general_500	SR	5	species_residual_then_genome_maximin	YES	YES	2.3027229956236641	2.3027229956236641	2.3027229956236641	2.3027229956236641	scores_equal_genome_tie_break	genome_tie_break
+remove_500	OPS	3	maximin	YES	YES	2.9763029453854677	2.9034287513035952			selected_higher	higher_maximin_score
+remove_500	SR	19	species_residual_then_genome_maximin	YES	YES	1.3095392933684462	1.309243561851388	1.3095392933684462	1.4430373518085367	selected_primary_higher	higher_species_residual_score
+replace_500	OPS	25	maximin	NO	NO	1.0518667104840198				not_comparable	baseline_choice_unavailable
+replace_500	SR	45	species_residual_then_genome_maximin	NO	NO	0.79721127993570329		0.82576061208068852		not_comparable	baseline_choice_unavailable
+add_heavy_species_500	OPS	2	maximin	YES	NO	3.2386320737545113				not_comparable	baseline_choice_not_species_representative
+add_heavy_species_500	SR	0	none	YES	YES					identical_through_N500	none
+add_new_species_100	OPS	7	maximin	YES	YES	1.8134024124105883	1.7563994922599349			selected_higher	higher_maximin_score
+add_new_species_100	SR	10	species_residual_then_genome_maximin	YES	YES	1.784537152933545	1.7839396750935141	1.784537152933545	1.7839396750935141	selected_primary_higher	higher_species_residual_score
+taxonomy_split_500	OPS	2	maximin	YES	NO	3.2388127855851279				not_comparable	baseline_choice_not_species_representative
+taxonomy_split_500	SR	134	species_residual_then_genome_maximin	YES	YES	0.46860401712136024	0.46856840386725196	0.46860401712136024	0.46856840386725196	selected_primary_higher	higher_species_residual_score
+taxonomy_merge_100_singletons	OPS	3	maximin	YES	NO	2.8991583463156196				not_comparable	baseline_choice_not_species_representative
+taxonomy_merge_100_singletons	SR	1	initial_species_centroid_then_genome_min	YES	YES	0.012157143092079714	0.053424716896757297	0.23414383791106394	0.41935510034105061	selected_primary_lower	lower_initial_species_centroid_distance

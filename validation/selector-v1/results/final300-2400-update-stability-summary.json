@@ -1,0 +1,39 @@
+{
+  "analysis": "selector-v1-final-update-stability",
+  "baseline_genomes": 55306,
+  "baseline_species": 13765,
+  "identity_blinding": "REQUIRED",
+  "numpy": "2.4.6",
+  "panel_sizes": [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500
+  ],
+  "python": "3.11.16",
+  "scenarios": [
+    "add_general_500",
+    "remove_500",
+    "replace_500",
+    "add_heavy_species_500",
+    "add_new_species_100",
+    "taxonomy_split_500",
+    "taxonomy_merge_100_singletons"
+  ],
+  "schema_version": 1,
+  "scientific_output_sha256": {
+    "first_divergence": "bf8550b2796f56b3e5a5e81c2f8244c0d6330c50b2097a4973f3effd1a600573",
+    "prefixes": "cacb5fc513a2bb752c9e4d6df8b48013bfdcd9f940898bae580bb58d28cad23b",
+    "scenarios": "a6b7cf5bddbc7b4a1bb58f9a7c4993e1a4db3c7307c217cd960814c7c2d2ae47"
+  },
+  "selection_policy": "scenario-specific SHA256 ranking; no PRNG",
+  "selector_decision_rule_introduced": false,
+  "selectors": [
+    "OPS",
+    "SR"
+  ],
+  "stability_acceptance_threshold_defined": false,
+  "synthetic_feature_policy": "shadow copies of observed raw structural profiles only"
+}
