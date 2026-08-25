@@ -1,0 +1,21 @@
+{
+  "decision_counts": {
+    "EXCLUDE_METADATA": 373,
+    "RETAIN_METADATA": 70477
+  },
+  "reason_counts": {
+    "automatic_atypical_exclusion:chimeric": 1,
+    "automatic_atypical_exclusion:contaminated": 360,
+    "biosample_object_missing_or_malformed": 12
+  },
+  "records": 70850,
+  "warning_counts": {
+    "chimeric": 1,
+    "contaminated": 360,
+    "genome length too large": 123,
+    "genome length too small": 269,
+    "low quality sequence": 7,
+    "misassembled": 8,
+    "unverified source organism": 1174
+  }
+}

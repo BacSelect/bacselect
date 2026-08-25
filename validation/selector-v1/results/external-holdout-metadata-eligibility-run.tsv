@@ -1,0 +1,15 @@
+field	value
+schema_version	1
+status	SUCCESS
+bacselect_git_commit	0ceefb9ae393ac6845a539d9bc0d5852fe2ee199
+parser_sha256	6e57dd950f972a9883e8fcbc78a18c694a5fabda58b03835f268eef681a03cc2
+raw_snapshot_sha256	b1b016891ae4e976d03606dfb2f35f74b03d21cf3ec82832f77f4d113bd622d5
+started_utc	2026-08-25T13:44:42Z
+finished_utc	2026-08-25T13:44:45Z
+raw_records	70850
+output_identity_level	aggregate_blinded_only
+summary_sha256	108b631e1ce0c6344b4c39b6249f59ba05c8e922078548b7a9624703bd082adf
+summary_bytes	521
+baseline_membership_calculated	no
+structural_features_calculated	no
+selector_outcomes_calculated	no
