@@ -1,0 +1,52 @@
+{
+  "artifacts_sha256": {
+    "execution_log": "b35784f0a51ed820d914bc275f5dc0aaa516088d2adb5e7d52ebdc20e9d544a1",
+    "stage1-aggregate-summary.json": "cbcf32cc0351dce43aa09df9e405d0d6f97ab08aef3c41965f3c7ad43fbff029",
+    "stage1-content-manifest.tsv": "1819a346a07852fd847d482676ba82e532c176a7dd3ac7cfa0a1f7be3764a5c7",
+    "stage1-execution-provenance.json": "8277681ebb4304e9a5f27df4679eb9562b8a4055ee805e7d617e5b5a1ba0ae85",
+    "stage1-input-evidence-manifest.tsv": "d8b00c3ffcda2ff39832a7b3b8d6a18325d8289452d94f6eb7f3e436b6943a54",
+    "stage1-preclassification-provenance.json": "45705252c710d67c3062b040b8a7ed4a6d558e1af4c44293930e909f5452cfb2",
+    "stage1-source-truth-decisions.tsv": "530ccec7679db9866ae04e81f05080094ace563a530a122c8ae97251801ea96d",
+    "stage1-source-truth-relations.tsv": "d9f50f60656f09b74fba3f28f919f6390760157ffd5b2fa3c9e13bcdb31feda5"
+  },
+  "candidate_count": 68480,
+  "decision_row_count": 68480,
+  "execution_git_commit": "3abb710b7f03fb018c13628cc101bda5a4959512",
+  "fresh_candidate_count": 13335,
+  "historical_candidate_count": 55145,
+  "later_stage": {
+    "chromosome_integrity_generated": false,
+    "complete_universe_generated": false,
+    "holdout_membership_generated": false,
+    "selector_outcomes_calculated": false,
+    "stage2_repeated_biosample_generated": false,
+    "structural_features_calculated": false,
+    "taxonomy_resolution_generated": false
+  },
+  "membership_sha256": {
+    "combined": "810c584d578bad678e3a9ef3131e13777444961b906a57f5b2cbdcafd691e324",
+    "fresh": "75a8312f090ffef9b2b0c0a41311c02c059a4f353491208c08d3cd64c8256e22",
+    "historical": "ed659ac6f9cba972a819ea3fb291d738ddeaf55842feb787a7c8ebbcf467952c"
+  },
+  "reason_counts": {
+    "CIRCULAR_CONTAINMENT_RETAINED": 231,
+    "EXACT_DUPLICATE_PRIMARY_COMPONENTS": 8,
+    "LINEAR_COMPONENT_FULLY_CONTAINED": 113,
+    "NO_SOURCE_REDUNDANCY": 68128
+  },
+  "recovery_001": {
+    "clarification_git_commit": "e44c962c97ebe66bc073477f46c40ba5c448b92a",
+    "failed_attempt_git_commit": "25e44f29072d951172784364e0b16c291ecb2331",
+    "failed_attempt_input_evidence_manifest_sha256": "d8b00c3ffcda2ff39832a7b3b8d6a18325d8289452d94f6eb7f3e436b6943a54",
+    "failed_attempt_preclassification_provenance_sha256": "70b4590cc664e6a0d79087fb33afab5c2cffecb7b499589b44e4184393ed6ec5",
+    "implementation_git_commit": "fa26abf4f69d061a1ff1917788e33e8b01168229",
+    "wrapper_git_commit": "3abb710b7f03fb018c13628cc101bda5a4959512"
+  },
+  "review_unresolved_count": 0,
+  "schema_version": 1,
+  "status": "STAGE1_SOURCE_TRUTH_COMPLETE",
+  "status_counts": {
+    "EXCLUDE_SOURCE_TRUTH": 121,
+    "SUITABLE": 68359
+  }
+}
