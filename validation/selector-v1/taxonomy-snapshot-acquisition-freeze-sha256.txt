@@ -1,0 +1,2 @@
+ef7c7f73d5ad4dcc20f74f761e43a3e3c05e77d264b93d0a01d606a8e3866ac4  taxonomy-snapshot-acquisition-freeze.json
+7c2e4d044583fb798a34ebaa32ccb617bca7af90e95423d5e89023d008a06248  taxonomy-snapshot-acquisition-freeze.md
