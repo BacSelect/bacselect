@@ -1,0 +1,22 @@
+{
+  "classification": "acquisition_unavailable",
+  "classification_is_sequence_ineligibility": false,
+  "classification_rule": "datasets_catalog_without_sequence_payload",
+  "datasets_version_changed": false,
+  "frozen_requested_targets": 15326,
+  "pre_final_content_audit": true,
+  "recovery_batch_numbers": [
+    24,
+    28
+  ],
+  "recovery_validates_package_copy": true,
+  "schema_version": 3,
+  "selector_outcome_generated": false,
+  "source_execution_is_modified": false,
+  "source_failed_partial_batches": 2,
+  "source_finalized_batches": 29,
+  "source_production_commit": "7aba4b0a2aa22c05ce808bf9b5811606bd3d2293",
+  "status": "PROSPECTIVE_RECOVERY_CORRECTION",
+  "target_rows_use_frozen_worker_loader": true,
+  "target_set_changed": false
+}
