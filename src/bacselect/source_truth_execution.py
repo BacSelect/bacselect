@@ -761,18 +761,15 @@ def source_evidence_sha256(
             "Primary Assembly component count mismatch"
         )
 
-    package_row = package_manifest.get(
-        candidate.fasta_file
-    )
-
-    if package_row is None:
-        raise ValueError(
-            "candidate FASTA absent from package manifest"
-        )
-
     candidate_sha = _sha256(
         candidate.fasta_sha256,
         field="candidate fasta_sha256",
+    )
+
+    package_row = _match_candidate_package_row(
+        candidate.fasta_file,
+        candidate_sha,
+        package_manifest,
     )
 
     package_sha = _sha256(
@@ -826,6 +823,68 @@ def source_evidence_sha256(
     ).hexdigest()
 
 
+def _match_candidate_package_row(
+    fasta_file: str,
+    fasta_sha256: str,
+    package_manifest: Mapping[str, PackageFile],
+) -> PackageFile:
+    """Bind frozen candidate FASTA evidence to exactly one package row."""
+
+    candidate_sha = _sha256(
+        fasta_sha256,
+        field="candidate fasta_sha256",
+    )
+
+    exact = package_manifest.get(
+        fasta_file
+    )
+
+    if exact is not None:
+        exact_sha = _sha256(
+            exact.sha256,
+            field="package FASTA sha256",
+        )
+
+        if exact_sha != candidate_sha:
+            raise ValueError(
+                "candidate FASTA SHA conflicts with package manifest"
+            )
+
+        return exact
+
+    candidate_basename = Path(
+        fasta_file
+    ).name
+
+    matches = tuple(
+        row
+        for row in package_manifest.values()
+        if (
+            Path(
+                row.relative_path
+            ).name
+            == candidate_basename
+            and row.sha256
+            == candidate_sha
+        )
+    )
+
+    if not matches:
+        raise ValueError(
+            "candidate FASTA absent from package manifest: "
+            "no package-manifest FASTA row matches "
+            "candidate basename and SHA256"
+        )
+
+    if len(matches) != 1:
+        raise ValueError(
+            "multiple package-manifest FASTA rows match "
+            "candidate basename and SHA256"
+        )
+
+    return matches[0]
+
+
 def load_primary_components(
     candidate: CandidateAudit,
     component_rows: Sequence[ComponentAudit],
@@ -854,14 +913,11 @@ def load_primary_components(
             "Primary Assembly component count mismatch"
         )
 
-    package_row = package_manifest.get(
-        candidate.fasta_file
+    package_row = _match_candidate_package_row(
+        candidate.fasta_file,
+        candidate.fasta_sha256,
+        package_manifest,
     )
-
-    if package_row is None:
-        raise ValueError(
-            "candidate FASTA absent from package manifest"
-        )
 
     if (
         package_row.sha256
@@ -873,7 +929,7 @@ def load_primary_components(
 
     fasta_path = resolve_manifest_path(
         candidate.batch_dir,
-        candidate.fasta_file,
+        package_row.relative_path,
     )
 
     observed_size = fasta_path.stat().st_size

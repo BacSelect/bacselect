@@ -1376,3 +1376,254 @@ def test_source_evidence_hash_binds_topology_and_exact_byte_contract(
     )
 
     assert topology_changed != observed
+
+
+def test_candidate_basename_resolves_package_relative_fasta(
+    tmp_path,
+):
+    candidate_path, component_path, manifest_path = (
+        make_candidate_batch(
+            tmp_path
+        )
+    )
+
+    with candidate_path.open(
+        newline="",
+        encoding="utf-8",
+    ) as handle:
+        reader = csv.DictReader(
+            handle,
+            delimiter="\t",
+        )
+
+        fields = tuple(
+            reader.fieldnames
+            or ()
+        )
+
+        rows = list(
+            reader
+        )
+
+    assert len(rows) == 1
+
+    original_fasta_file = (
+        rows[0][
+            "fasta_file"
+        ]
+    )
+
+    basename = Path(
+        original_fasta_file
+    ).name
+
+    assert basename
+    assert (
+        basename
+        != original_fasta_file
+    )
+
+    rows[0][
+        "fasta_file"
+    ] = basename
+
+    write_tsv(
+        candidate_path,
+        fields,
+        rows,
+    )
+
+    population = load_candidate_population(
+        [
+            candidate_path
+        ],
+        expected_total=1,
+        expected_eligible=1,
+        expected_ineligible=0,
+    )
+
+    candidate = (
+        population.candidates[
+            0
+        ]
+    )
+
+    component_index = load_component_index(
+        component_path,
+        accessions={
+            candidate.accession,
+        },
+    )
+
+    package_manifest = load_package_manifest(
+        manifest_path
+    )
+
+    decision = evaluate_candidate(
+        candidate,
+        component_index[
+            candidate.accession
+        ],
+        package_manifest,
+    )
+
+    assert (
+        decision.source_evidence_sha256
+        is not None
+    )
+
+    assert (
+        decision.source_evidence_sha256
+        != candidate.fasta_sha256
+    )
+
+
+def test_candidate_package_binding_zero_match_fails_closed():
+    from bacselect.source_truth_execution import (
+        PackageFile,
+        _match_candidate_package_row,
+    )
+
+    fasta_file = (
+        "GCA_000000001.1_ASM1v1_genomic.fna"
+    )
+
+    package_manifest = {
+        (
+            "ncbi_dataset/data/"
+            "GCA_000000001.1/"
+            + fasta_file
+        ):
+            PackageFile(
+                relative_path=(
+                    "ncbi_dataset/data/"
+                    "GCA_000000001.1/"
+                    + fasta_file
+                ),
+                size_bytes=10,
+                sha256="2" * 64,
+            ),
+    }
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "no package-manifest FASTA row matches "
+            "candidate basename and SHA256"
+        ),
+    ):
+        _match_candidate_package_row(
+            fasta_file,
+            "1" * 64,
+            package_manifest,
+        )
+
+
+def test_candidate_package_binding_multiple_matches_fails_closed():
+    from bacselect.source_truth_execution import (
+        PackageFile,
+        _match_candidate_package_row,
+    )
+
+    fasta_file = (
+        "GCA_000000001.1_ASM1v1_genomic.fna"
+    )
+
+    fasta_sha = (
+        "1" * 64
+    )
+
+    path_a = (
+        "ncbi_dataset/data/"
+        "GCA_000000001.1/"
+        + fasta_file
+    )
+
+    path_b = (
+        "alternate/data/"
+        "GCA_000000001.1/"
+        + fasta_file
+    )
+
+    package_manifest = {
+        path_a:
+            PackageFile(
+                relative_path=path_a,
+                size_bytes=10,
+                sha256=fasta_sha,
+            ),
+        path_b:
+            PackageFile(
+                relative_path=path_b,
+                size_bytes=10,
+                sha256=fasta_sha,
+            ),
+    }
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "multiple package-manifest FASTA rows match "
+            "candidate basename and SHA256"
+        ),
+    ):
+        _match_candidate_package_row(
+            fasta_file,
+            fasta_sha,
+            package_manifest,
+        )
+
+
+def test_candidate_package_exact_path_sha_conflict_does_not_fallback():
+    from bacselect.source_truth_execution import (
+        PackageFile,
+        _match_candidate_package_row,
+    )
+
+    fasta_file = (
+        "ncbi_dataset/data/"
+        "GCA_000000001.1/"
+        "GCA_000000001.1_ASM1v1_genomic.fna"
+    )
+
+    basename = Path(
+        fasta_file
+    ).name
+
+    candidate_sha = (
+        "1" * 64
+    )
+
+    alternate_path = (
+        "alternate/data/"
+        "GCA_000000001.1/"
+        + basename
+    )
+
+    package_manifest = {
+        fasta_file:
+            PackageFile(
+                relative_path=fasta_file,
+                size_bytes=10,
+                sha256="2" * 64,
+            ),
+        alternate_path:
+            PackageFile(
+                relative_path=alternate_path,
+                size_bytes=10,
+                sha256=candidate_sha,
+            ),
+    }
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "candidate FASTA SHA conflicts "
+            "with package manifest"
+        ),
+    ):
+        _match_candidate_package_row(
+            fasta_file,
+            candidate_sha,
+            package_manifest,
+        )
