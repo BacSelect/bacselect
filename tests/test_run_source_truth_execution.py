@@ -1882,3 +1882,431 @@ def test_production_contract_is_exact():
             "batch-028",
         )
     )
+
+
+def test_recovery_001_contract_is_exact():
+    module = load_wrapper()
+
+    assert (
+        module.RECOVERY_001_CLARIFICATION_RELATIVE
+        == Path(
+            "validation/selector-v1/"
+            "stage1-source-truth-recovery-001.md"
+        )
+    )
+
+    assert (
+        module.EXPECTED_EXECUTION_IMPLEMENTATION_SHA256
+        == "83b8ec7fce774c0b68cb2af982aef13904c6b64b3ee695512c578f98e5de9b92"
+    )
+
+    assert (
+        module.EXPECTED_EXECUTION_TEST_SHA256
+        == "314b417ee05e2293ad37268963d9bdddb5bc58c9d6d6bc102a6cebe6ec926864"
+    )
+
+    assert (
+        module.EXPECTED_RECOVERY_001_CLARIFICATION_SHA256
+        == "a5c836a2b1e7d98b54d6264ad51c600acbbdc222706119b228bf6398fb8fecd0"
+    )
+
+    assert (
+        module.FROZEN_REPO_FILES[
+            module.RECOVERY_001_CLARIFICATION_RELATIVE
+        ]
+        == module.EXPECTED_RECOVERY_001_CLARIFICATION_SHA256
+    )
+
+    assert (
+        module.RECOVERY_001_FAILED_ATTEMPT_COMMIT
+        == "25e44f29072d951172784364e0b16c291ecb2331"
+    )
+
+    assert (
+        module.RECOVERY_001_IMPLEMENTATION_COMMIT
+        == "fa26abf4f69d061a1ff1917788e33e8b01168229"
+    )
+
+    assert (
+        module.EXPECTED_HISTORICAL_ELIGIBLE
+        == 55145
+    )
+
+    assert (
+        module.EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256
+        == "ed659ac6f9cba972a819ea3fb291d738ddeaf55842feb787a7c8ebbcf467952c"
+    )
+
+    assert (
+        module.EXPECTED_FRESH_ELIGIBLE
+        == 13335
+    )
+
+    assert (
+        module.EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256
+        == "75a8312f090ffef9b2b0c0a41311c02c059a4f353491208c08d3cd64c8256e22"
+    )
+
+    assert (
+        module.EXPECTED_STAGE1_TOTAL
+        == 68480
+    )
+
+    assert (
+        module.EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256
+        == "810c584d578bad678e3a9ef3131e13777444961b906a57f5b2cbdcafd691e324"
+    )
+
+
+def test_recovery_001_membership_checkpoint_fails_closed(
+    tmp_path,
+    monkeypatch,
+):
+    module = load_wrapper()
+
+    fresh_root = make_fresh_fixture(
+        tmp_path
+    )
+
+    recovery = (
+        tmp_path
+        / "recovery"
+    )
+
+    recovery.mkdir()
+
+    contract = module.PopulationContract(
+        historical_audit_rows=0,
+        cache_reuse=0,
+        historical_eligible=0,
+        historical_ineligible=0,
+        cache_verification_rows=0,
+        fresh_audit_rows=1,
+        fresh_eligible=1,
+        fresh_ineligible=0,
+        total=1,
+        ordinary_fresh_batches=(
+            "batch-001",
+        ),
+        recovery_fresh_batches=(),
+    )
+
+    fresh, specs, evidence = (
+        module.build_fresh_population(
+            fresh_root=fresh_root,
+            recovery_root=recovery,
+            contract=contract,
+            recovery_expected_sha256=None,
+            recovery_summary_sha256=None,
+        )
+    )
+
+    bundle = (
+        module.build_population_bundle(
+            historical_candidates=(),
+            fresh_candidates=fresh,
+            historical_specs=(),
+            fresh_specs=specs,
+            input_evidence_rows=evidence,
+            expected_total=1,
+        )
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_HISTORICAL_ELIGIBLE",
+        0,
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_FRESH_ELIGIBLE",
+        1,
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_STAGE1_TOTAL",
+        1,
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256",
+        bundle.historical_membership_sha256,
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256",
+        bundle.fresh_membership_sha256,
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256",
+        bundle.combined_membership_sha256,
+    )
+
+    module.verify_recovery_001_membership(
+        bundle
+    )
+
+    monkeypatch.setattr(
+        module,
+        "EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256",
+        "0" * 64,
+    )
+
+    with pytest.raises(
+        module.ExecutionError,
+        match=(
+            "combined Stage 1 recovery membership "
+            "SHA256 mismatch"
+        ),
+    ):
+        module.verify_recovery_001_membership(
+            bundle
+        )
+
+
+def test_recovery_001_checkpoint_precedes_scratch_execution():
+    import ast
+
+    source = WRAPPER.read_text(
+        encoding="utf-8"
+    )
+
+    tree = ast.parse(
+        source
+    )
+
+    main = next(
+        node
+        for node in tree.body
+        if (
+            isinstance(
+                node,
+                ast.FunctionDef,
+            )
+            and node.name
+            == "main"
+        )
+    )
+
+    calls = {}
+
+    for node in ast.walk(
+        main
+    ):
+        if not isinstance(
+            node,
+            ast.Call,
+        ):
+            continue
+
+        if not isinstance(
+            node.func,
+            ast.Name,
+        ):
+            continue
+
+        if node.func.id in {
+            "verify_recovery_001_membership",
+            "execute_to_scratch",
+        }:
+            calls[
+                node.func.id
+            ] = node.lineno
+
+    assert (
+        "verify_recovery_001_membership"
+        in calls
+    )
+
+    assert (
+        "execute_to_scratch"
+        in calls
+    )
+
+    assert (
+        calls[
+            "verify_recovery_001_membership"
+        ]
+        < calls[
+            "execute_to_scratch"
+        ]
+    )
+
+
+def test_preclassification_records_recovery_001(
+    tmp_path,
+):
+    module = load_wrapper()
+
+    fresh_root = make_fresh_fixture(
+        tmp_path
+    )
+
+    recovery = (
+        tmp_path
+        / "recovery"
+    )
+
+    recovery.mkdir()
+
+    contract = module.PopulationContract(
+        historical_audit_rows=0,
+        cache_reuse=0,
+        historical_eligible=0,
+        historical_ineligible=0,
+        cache_verification_rows=0,
+        fresh_audit_rows=1,
+        fresh_eligible=1,
+        fresh_ineligible=0,
+        total=1,
+        ordinary_fresh_batches=(
+            "batch-001",
+        ),
+        recovery_fresh_batches=(),
+    )
+
+    fresh, specs, evidence = (
+        module.build_fresh_population(
+            fresh_root=fresh_root,
+            recovery_root=recovery,
+            contract=contract,
+            recovery_expected_sha256=None,
+            recovery_summary_sha256=None,
+        )
+    )
+
+    bundle = (
+        module.build_population_bundle(
+            historical_candidates=(),
+            fresh_candidates=fresh,
+            historical_specs=(),
+            fresh_specs=specs,
+            input_evidence_rows=evidence,
+            expected_total=1,
+        )
+    )
+
+    repo = (
+        tmp_path
+        / "repo"
+    )
+
+    repo.mkdir()
+
+    final_dir = (
+        module.execute_to_scratch(
+            repo=repo,
+            expected_commit="c" * 40,
+            output_root=(
+                tmp_path
+                / "outside"
+            ),
+            bundle=bundle,
+            frozen_repo_sha256={},
+            project_finch_references=(),
+            acquisition_evidence={
+                "cache_reuse_accessions_sha256":
+                    "1" * 64,
+                "cache_reuse_manifest_sha256":
+                    "2" * 64,
+                "cache_verification_sha256":
+                    "3" * 64,
+            },
+        )
+    )
+
+    payload = json.loads(
+        (
+            final_dir
+            / "stage1-preclassification-provenance.json"
+        ).read_text(
+            encoding="utf-8"
+        )
+    )
+
+    recovery_payload = (
+        payload[
+            "stage1_recovery"
+        ]
+    )
+
+    assert (
+        recovery_payload[
+            "identifier"
+        ]
+        == module.RECOVERY_001_IDENTIFIER
+    )
+
+    assert (
+        recovery_payload[
+            "clarification_sha256"
+        ]
+        == module.EXPECTED_RECOVERY_001_CLARIFICATION_SHA256
+    )
+
+    assert (
+        recovery_payload[
+            "failed_attempt_bacselect_git_commit"
+        ]
+        == module.RECOVERY_001_FAILED_ATTEMPT_COMMIT
+    )
+
+    assert (
+        recovery_payload[
+            "recovery_implementation_bacselect_git_commit"
+        ]
+        == module.RECOVERY_001_IMPLEMENTATION_COMMIT
+    )
+
+    checkpoint = (
+        recovery_payload[
+            "required_membership_checkpoint"
+        ]
+    )
+
+    assert (
+        checkpoint[
+            "historical"
+        ][
+            "sha256"
+        ]
+        == module.EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256
+    )
+
+    assert (
+        checkpoint[
+            "fresh"
+        ][
+            "sha256"
+        ]
+        == module.EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256
+    )
+
+    assert (
+        checkpoint[
+            "combined"
+        ][
+            "sha256"
+        ]
+        == module.EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256
+    )
+
+    assert (
+        payload[
+            "classification_started"
+        ]
+        is False
+    )
+
+    assert (
+        payload[
+            "selector_outcomes_calculated"
+        ]
+        is False
+    )

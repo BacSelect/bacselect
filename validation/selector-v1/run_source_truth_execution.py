@@ -74,6 +74,11 @@ FINAL_ACQUISITION_EVIDENCE_RELATIVE = Path(
     "final-acquisition-manifest-evidence.json"
 )
 
+RECOVERY_001_CLARIFICATION_RELATIVE = Path(
+    "validation/selector-v1/"
+    "stage1-source-truth-recovery-001.md"
+)
+
 
 EXPECTED_METHOD_SHA256 = (
     "2d4acf6bef5caed189082c1109e841fafd617d8291b0610b9df1ca07ffe8a105"
@@ -84,11 +89,11 @@ EXPECTED_SOURCE_TRUTH_SHA256 = (
 )
 
 EXPECTED_EXECUTION_IMPLEMENTATION_SHA256 = (
-    "53d924c5060a949bc2e174e53fb1c71b6b37797af1be16ae2322f6751aaa97f8"
+    "83b8ec7fce774c0b68cb2af982aef13904c6b64b3ee695512c578f98e5de9b92"
 )
 
 EXPECTED_EXECUTION_TEST_SHA256 = (
-    "c453adae91e9cd7bfa0b25cc8e97396bdd03826e63b5577e78c4681847046eb9"
+    "314b417ee05e2293ad37268963d9bdddb5bc58c9d6d6bc102a6cebe6ec926864"
 )
 
 EXPECTED_INHERITED_REFERENCES_SHA256 = (
@@ -101,6 +106,10 @@ EXPECTED_TRANSITIVE_REFERENCES_SHA256 = (
 
 EXPECTED_FINAL_ACQUISITION_EVIDENCE_SHA256 = (
     "e4f4c354f5a78f4efc123eede2dbee475440785fa72cc59d233b4406e64103bc"
+)
+
+EXPECTED_RECOVERY_001_CLARIFICATION_SHA256 = (
+    "a5c836a2b1e7d98b54d6264ad51c600acbbdc222706119b228bf6398fb8fecd0"
 )
 
 EXPECTED_FRESH_RECOVERY_SUMMARY_SHA256 = (
@@ -127,6 +136,8 @@ FROZEN_REPO_FILES = {
         EXPECTED_TRANSITIVE_REFERENCES_SHA256,
     FINAL_ACQUISITION_EVIDENCE_RELATIVE:
         EXPECTED_FINAL_ACQUISITION_EVIDENCE_SHA256,
+    RECOVERY_001_CLARIFICATION_RELATIVE:
+        EXPECTED_RECOVERY_001_CLARIFICATION_SHA256,
 }
 
 
@@ -146,6 +157,30 @@ EXPECTED_FRESH_ELIGIBLE = 13_335
 EXPECTED_FRESH_INELIGIBLE = 1_984
 
 EXPECTED_STAGE1_TOTAL = 68_480
+
+RECOVERY_001_IDENTIFIER = (
+    "stage1-source-truth-recovery-001"
+)
+
+RECOVERY_001_FAILED_ATTEMPT_COMMIT = (
+    "25e44f29072d951172784364e0b16c291ecb2331"
+)
+
+RECOVERY_001_IMPLEMENTATION_COMMIT = (
+    "fa26abf4f69d061a1ff1917788e33e8b01168229"
+)
+
+EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256 = (
+    "ed659ac6f9cba972a819ea3fb291d738ddeaf55842feb787a7c8ebbcf467952c"
+)
+
+EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256 = (
+    "75a8312f090ffef9b2b0c0a41311c02c059a4f353491208c08d3cd64c8256e22"
+)
+
+EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256 = (
+    "810c584d578bad678e3a9ef3131e13777444961b906a57f5b2cbdcafd691e324"
+)
 
 
 ORDINARY_FRESH_BATCHES = (
@@ -2402,6 +2437,79 @@ def build_population_bundle(
     )
 
 
+def verify_recovery_001_membership(
+    bundle: PopulationBundle,
+) -> None:
+    """Require exact failed-attempt Stage 1 membership checkpoints."""
+
+    observed = {
+        "historical": (
+            len(
+                bundle.historical_candidates
+            ),
+            bundle.historical_membership_sha256,
+        ),
+        "fresh": (
+            len(
+                bundle.fresh_candidates
+            ),
+            bundle.fresh_membership_sha256,
+        ),
+        "combined": (
+            (
+                len(
+                    bundle.historical_candidates
+                )
+                + len(
+                    bundle.fresh_candidates
+                )
+            ),
+            bundle.combined_membership_sha256,
+        ),
+    }
+
+    expected = {
+        "historical": (
+            EXPECTED_HISTORICAL_ELIGIBLE,
+            EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256,
+        ),
+        "fresh": (
+            EXPECTED_FRESH_ELIGIBLE,
+            EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256,
+        ),
+        "combined": (
+            EXPECTED_STAGE1_TOTAL,
+            EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256,
+        ),
+    }
+
+    for group in (
+        "historical",
+        "fresh",
+        "combined",
+    ):
+        (
+            observed_count,
+            observed_sha,
+        ) = observed[group]
+
+        (
+            expected_count,
+            expected_sha,
+        ) = expected[group]
+
+        if observed_count != expected_count:
+            raise ExecutionError(
+                f"{group} Stage 1 recovery membership count mismatch: "
+                f"expected={expected_count} observed={observed_count}"
+            )
+
+        if observed_sha != expected_sha:
+            raise ExecutionError(
+                f"{group} Stage 1 recovery membership SHA256 mismatch"
+            )
+
+
 def evaluate_population(
     bundle: PopulationBundle,
 ) -> tuple:
@@ -2626,6 +2734,40 @@ def execute_to_scratch(
             ],
         "input_evidence_manifest_sha256":
             input_manifest_sha,
+        "stage1_recovery": {
+            "identifier":
+                RECOVERY_001_IDENTIFIER,
+            "clarification_relative_path":
+                str(
+                    RECOVERY_001_CLARIFICATION_RELATIVE
+                ),
+            "clarification_sha256":
+                EXPECTED_RECOVERY_001_CLARIFICATION_SHA256,
+            "failed_attempt_bacselect_git_commit":
+                RECOVERY_001_FAILED_ATTEMPT_COMMIT,
+            "recovery_implementation_bacselect_git_commit":
+                RECOVERY_001_IMPLEMENTATION_COMMIT,
+            "required_membership_checkpoint": {
+                "historical": {
+                    "count":
+                        EXPECTED_HISTORICAL_ELIGIBLE,
+                    "sha256":
+                        EXPECTED_RECOVERY_001_HISTORICAL_MEMBERSHIP_SHA256,
+                },
+                "fresh": {
+                    "count":
+                        EXPECTED_FRESH_ELIGIBLE,
+                    "sha256":
+                        EXPECTED_RECOVERY_001_FRESH_MEMBERSHIP_SHA256,
+                },
+                "combined": {
+                    "count":
+                        EXPECTED_STAGE1_TOTAL,
+                    "sha256":
+                        EXPECTED_RECOVERY_001_COMBINED_MEMBERSHIP_SHA256,
+                },
+            },
+        },
         "membership": {
             "historical": {
                 "count":
@@ -3165,6 +3307,14 @@ def main(
         expected_total=(
             EXPECTED_STAGE1_TOTAL
         ),
+    )
+
+    verify_recovery_001_membership(
+        bundle
+    )
+
+    print(
+        "PASS | Stage 1 Recovery 001 membership checkpoint exact"
     )
 
     print(
