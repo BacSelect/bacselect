@@ -19,7 +19,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 import re
-from typing import Mapping, Sequence
+from typing import Callable, Mapping, Sequence
 
 from bacselect import source_chromosome_integrity
 from bacselect.source_cache_verify import (
@@ -708,8 +708,12 @@ def evaluate_stage3_candidate(
     component_rows: Sequence[ComponentAudit],
     package_manifest: Mapping[str, PackageFile],
     expected_source_evidence_sha256: str,
-    historical: (
-        source_chromosome_integrity.HistoricalReuseEvidence
+    historical_provider: (
+        Callable[
+            [str],
+            source_chromosome_integrity.HistoricalReuseEvidence
+            | None,
+        ]
         | None
     ) = None,
 ) -> Stage3CandidateEvaluation:
@@ -721,6 +725,16 @@ def evaluate_stage3_candidate(
     ):
         raise Stage3ExecutionError(
             "candidate has unexpected type"
+        )
+
+    if (
+        historical_provider is not None
+        and not callable(
+            historical_provider
+        )
+    ):
+        raise Stage3ExecutionError(
+            "historical evidence provider must be callable"
         )
 
     expected_source_sha = _lower_sha256(
@@ -939,6 +953,35 @@ def evaluate_stage3_candidate(
         raise Stage3ExecutionError(
             "chromosome trigger accounting mismatch"
         )
+
+    historical = None
+
+    if (
+        trigger.triggered
+        and historical_provider is not None
+    ):
+        try:
+            historical = historical_provider(
+                candidate.accession
+            )
+        except Stage3ExecutionError:
+            raise
+        except Exception as exc:
+            raise Stage3ExecutionError(
+                "historical evidence provider failed"
+            ) from exc
+
+        if (
+            historical is not None
+            and not isinstance(
+                historical,
+                source_chromosome_integrity.HistoricalReuseEvidence,
+            )
+        ):
+            raise Stage3ExecutionError(
+                "historical evidence provider returned "
+                "unexpected type"
+            )
 
     try:
         decision = (

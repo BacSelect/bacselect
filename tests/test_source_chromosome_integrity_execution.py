@@ -371,7 +371,16 @@ def evaluate_fixture(
     fixture,
     *,
     historical=None,
+    historical_provider=None,
 ):
+    if historical is not None:
+        assert historical_provider is None
+
+        def historical_provider(
+            accession,
+        ):
+            return historical
+
     return evaluate_stage3_candidate(
         candidate=fixture[
             "candidate"
@@ -387,7 +396,7 @@ def evaluate_fixture(
                 "expected_source_sha"
             ]
         ),
-        historical=historical,
+        historical_provider=historical_provider,
     )
 
 
@@ -1455,6 +1464,19 @@ def test_nontriggered_candidate_does_not_consult_poisoned_historical(
         tmp_path
     )
 
+    calls = []
+
+    def poisoned_provider(
+        accession,
+    ):
+        calls.append(
+            accession
+        )
+
+        raise AssertionError(
+            "historical provider must not be called"
+        )
+
     observed = evaluate_stage3_candidate(
         candidate=fixture[
             "candidate"
@@ -1470,12 +1492,111 @@ def test_nontriggered_candidate_does_not_consult_poisoned_historical(
                 "expected_source_sha"
             ]
         ),
-        historical=object(),
+        historical_provider=poisoned_provider,
     )
+
+    assert calls == []
 
     assert observed.decision.reason == (
         "NO_CHROMOSOME_INTEGRITY_TRIGGER"
     )
+
+
+def test_triggered_candidate_calls_historical_provider_once(
+    tmp_path,
+):
+    fixture = make_fixture(
+        tmp_path,
+        components=trigger_components(),
+    )
+
+    historical = HistoricalReuseEvidence(
+        uses_historical_project_finch_package=True,
+        cache_content_verification="pass",
+        adjudication_accession="GCA_000000001.1",
+        adjudication_outcome=(
+            source_chromosome_integrity.HISTORICAL_RETAIN
+        ),
+    )
+
+    calls = []
+
+    def provider(
+        accession,
+    ):
+        calls.append(
+            accession
+        )
+
+        return historical
+
+    observed = evaluate_fixture(
+        fixture,
+        historical_provider=provider,
+    )
+
+    assert calls == [
+        "GCA_000000001.1",
+    ]
+
+    assert observed.trigger.triggered is True
+    assert observed.decision.historical_adjudication_reused is True
+
+
+def test_triggered_candidate_rejects_bad_provider_result(
+    tmp_path,
+):
+    fixture = make_fixture(
+        tmp_path,
+        components=trigger_components(),
+    )
+
+    def provider(
+        accession,
+    ):
+        return object()
+
+    with pytest.raises(
+        Stage3ExecutionError,
+        match=(
+            "historical evidence provider returned "
+            "unexpected type"
+        ),
+    ):
+        evaluate_fixture(
+            fixture,
+            historical_provider=provider,
+        )
+
+
+def test_noncallable_historical_provider_fails_closed(
+    tmp_path,
+):
+    fixture = make_fixture(
+        tmp_path
+    )
+
+    with pytest.raises(
+        Stage3ExecutionError,
+        match="historical evidence provider must be callable",
+    ):
+        evaluate_stage3_candidate(
+            candidate=fixture[
+                "candidate"
+            ],
+            component_rows=fixture[
+                "component_rows"
+            ],
+            package_manifest=fixture[
+                "package_manifest"
+            ],
+            expected_source_evidence_sha256=(
+                fixture[
+                    "expected_source_sha"
+                ]
+            ),
+            historical_provider=object(),
+        )
 
 
 def test_trigger_crosscheck_fails_closed(
