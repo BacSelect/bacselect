@@ -1,0 +1,53 @@
+{
+  "artifacts_sha256": {
+    "execution_log": "75251b54026d07cf5a10a8d7df899a14a8eaf382ec762249276484d42e1f34e1",
+    "stage2-aggregate-summary.json": "36aaa8b6009030619d978dd1e09be625af907d3405c9b5e111b1eca0024a48a0",
+    "stage2-biosample-groups.tsv": "708b498ea7c29a3b8df00368de4ec409a766c191cefb3e0ff10c8a74cf968e13",
+    "stage2-content-manifest.tsv": "f10942acac34c4668af94d36c92562eb741c67a18db319dc8a2e6e4bf4447821",
+    "stage2-execution-provenance.json": "8da59831899cf7909b8f41bb8054193c4507e8b80083d0f7a1a627d956a776a9",
+    "stage2-input-evidence-manifest.tsv": "c98e2bf083d36b865ecf4e2b421757e4a92e51728073bd8064dee13fe93ecca7",
+    "stage2-predecision-provenance.json": "897741d32dfc3717236057e09e361fcd5a5772a0a500443d0f544424c2cb4058",
+    "stage2-repeated-biosample-decisions.tsv": "3613195996b8d8d1a5d6cbb23976a5418d97666054aa8ef33601b5ac31a7979a"
+  },
+  "biosample_group_count": 68315,
+  "continue_count": 68278,
+  "decision_row_count": 68359,
+  "differing_repeated_group_count": 37,
+  "execution_git_commit": "38b49a677fa9e6e6832816392a788ea16905c6b0",
+  "identical_repeated_group_count": 5,
+  "later_stage": {
+    "chromosome_integrity_generated": false,
+    "complete_universe_generated": false,
+    "holdout_membership_generated": false,
+    "selector_outcomes_calculated": false,
+    "structural_features_calculated": false,
+    "taxonomy_resolution_generated": false
+  },
+  "nonrepresentative_count": 6,
+  "operational_recovery_001": {
+    "failed_attempt_finalized_outputs_present": false,
+    "failed_attempt_input_evidence_manifest_sha256": "c98e2bf083d36b865ecf4e2b421757e4a92e51728073bd8064dee13fe93ecca7",
+    "failed_attempt_predecision_provenance_sha256": "897741d32dfc3717236057e09e361fcd5a5772a0a500443d0f544424c2cb4058",
+    "failed_attempt_status": "INTERRUPTED_BEFORE_FINALIZATION",
+    "successful_execution_git_commit": "38b49a677fa9e6e6832816392a788ea16905c6b0",
+    "successful_execution_status": "STAGE2_REPEATED_BIOSAMPLE_COMPLETE"
+  },
+  "reason_counts": {
+    "BIOSAMPLE_FINGERPRINTS_DIFFER": 75,
+    "BIOSAMPLE_IDENTICAL_NONREPRESENTATIVE": 6,
+    "BIOSAMPLE_IDENTICAL_REPRESENTATIVE": 5,
+    "BIOSAMPLE_SINGLETON": 68273
+  },
+  "repeated_group_count": 42,
+  "review_unresolved_count": 75,
+  "schema_version": 1,
+  "singleton_group_count": 68273,
+  "stage2_input_candidate_count": 68359,
+  "stage2_input_membership_sha256": "8ce5d8c03029beb6934aad8688ac63d75026be6f1377a96de43d3b41db8ba5f3",
+  "status": "STAGE2_REPEATED_BIOSAMPLE_COMPLETE",
+  "status_counts": {
+    "CONTINUE": 68278,
+    "NONREPRESENTATIVE": 6,
+    "REVIEW_UNRESOLVED": 75
+  }
+}
