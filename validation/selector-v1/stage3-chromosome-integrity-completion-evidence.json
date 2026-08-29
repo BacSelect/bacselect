@@ -1,0 +1,76 @@
+{
+  "artifacts_sha256": {
+    "stage3-aggregate-summary.json": "31180c52457248ab4119ae1fadace4a8f90ae955408275a6b889e94fdcd85c93",
+    "stage3-chromosome-integrity-decisions.tsv": "13d66c0febb809d30862730eff0b419c3568fc9cdd113970ac441b0fce748f04",
+    "stage3-content-manifest.tsv": "18c49b0ff5bd499f97b790eedc1daf6807ebbb09f8fa7779eac6e3c8a3fe1a6c",
+    "stage3-execution-provenance.json": "dbdbd6336971b19463bdc88ba576df2e95d83272bd73c47103c8505925e492c2",
+    "stage3-input-evidence-manifest.tsv": "1de0fb5430383ea7c287fbdbb7da90a61ce3866115991c566bf6f53bb816cbf3",
+    "stage3-predecision-provenance.json": "0402007175b88d7e95aea07e2296fb15f0c546398c51624d55ab329adbe001ad",
+    "successful_execution_stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "successful_execution_stdout": "fb62a3db82d828929f2249f382719fa7525b38540637a7a4d3fe40cf0edf5a10"
+  },
+  "decision_row_count": 68278,
+  "exclude_source_replicon_integrity_count": 33,
+  "execution_git_commit": "dfe72a4c0c6ddef3af999c10b2db66d05b0eca88",
+  "historical_adjudication_artifact_parsed": true,
+  "historical_adjudication_reuse_count": 80,
+  "later_stage": {
+    "chromosome_integrity_generated": true,
+    "complete_universe_generated": false,
+    "holdout_membership_generated": false,
+    "selector_outcomes_calculated": false,
+    "structural_features_calculated": false,
+    "taxonomy_resolution_generated": false
+  },
+  "nontriggered_candidate_count": 68140,
+  "operational_recovery": {
+    "attempt_001": {
+      "execution_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "failed_attempt_finalized_outputs_present": false,
+      "failed_attempt_input_evidence_manifest_sha256": "1de0fb5430383ea7c287fbdbb7da90a61ce3866115991c566bf6f53bb816cbf3",
+      "failed_attempt_predecision_provenance_sha256": "0402007175b88d7e95aea07e2296fb15f0c546398c51624d55ab329adbe001ad",
+      "status": "INTERRUPTED_BEFORE_FINALIZATION"
+    },
+    "attempt_002": {
+      "failed_attempt_finalized_outputs_present": false,
+      "failed_attempt_input_evidence_manifest_sha256": "1de0fb5430383ea7c287fbdbb7da90a61ce3866115991c566bf6f53bb816cbf3",
+      "failed_attempt_predecision_provenance_sha256": "0402007175b88d7e95aea07e2296fb15f0c546398c51624d55ab329adbe001ad",
+      "recovery_definition_git_commit": "290e2a5d8b6c3a476006fab92b56c0e3c2c2b71a",
+      "recovery_test_sha256": "cda45755709fba42c5ab9c80ccc2f40de72e1b468897c9e50170cb3581b33185",
+      "recovery_wrapper_sha256": "41dca2b69fe69e7c919a67337f22f1fc6ca1bf8deaca5db59cf17eb667f7d19b",
+      "slurm_job_id": 2508496,
+      "slurm_stderr_sha256": "18c1ec27c3eccdadf3f0717fe52d551b3a14d72a381a7e91f0a28609097023fe",
+      "slurm_stdout_sha256": "f264015db2469c101fbf62640a255d16c55ebd9121e1fc895b4371eefc301ee3",
+      "status": "SLURM_TIME_LIMIT"
+    },
+    "attempt_003": {
+      "recovery_definition_git_commit": "589df7ddf611184f7c88bba0edc29e775fc967fd",
+      "recovery_test_sha256": "e99c08b99dc601ea217c1e6b5015d742be8a8e6a0f2f7b12061769b11a3c7a9e",
+      "recovery_wrapper_sha256": "abda3bbc9813e54f7a9b8a2ebb8d6d56bf88238f127038ca4ad06921ba49f49e",
+      "slurm_job_id": 2508917,
+      "slurm_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "slurm_stdout_sha256": "fb62a3db82d828929f2249f382719fa7525b38540637a7a4d3fe40cf0edf5a10",
+      "successful_execution_git_commit": "dfe72a4c0c6ddef3af999c10b2db66d05b0eca88",
+      "successful_execution_status": "STAGE3_CHROMOSOME_INTEGRITY_COMPLETE"
+    }
+  },
+  "pass_count": 68175,
+  "reason_counts": {
+    "HISTORICAL_FRAGMENTED_CHROMOSOME_SET": 33,
+    "HISTORICAL_RETAIN_CONFIRMED_MULTIPARTITE": 35,
+    "HISTORICAL_UNRESOLVED": 12,
+    "NOT_HISTORICAL_PROJECT_FINCH_PACKAGE": 58,
+    "NO_CHROMOSOME_INTEGRITY_TRIGGER": 68140
+  },
+  "review_unresolved_count": 70,
+  "schema_version": 1,
+  "stage3_input_candidate_count": 68278,
+  "stage3_input_membership_sha256": "e86944d3e8b0407a7901c1a996f7adb42eeda3efffd3384fec7a8d87859209f4",
+  "status": "STAGE3_CHROMOSOME_INTEGRITY_COMPLETE",
+  "status_counts": {
+    "EXCLUDE_SOURCE_REPLICON_INTEGRITY": 33,
+    "PASS": 68175,
+    "REVIEW_UNRESOLVED": 70
+  },
+  "triggered_candidate_count": 138
+}
