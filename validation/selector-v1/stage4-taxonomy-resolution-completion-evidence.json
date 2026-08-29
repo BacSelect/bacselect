@@ -1,0 +1,51 @@
+{
+  "artifacts_sha256": {
+    "stage4-aggregate-summary.json": "23365e53e9f7831e7587c41d30d336fe78cf170f57cbc4cb912f6b7536c93f4f",
+    "stage4-content-manifest.tsv": "bb7c9b82396d41761856355d1206d9fd8211a0ab3ff3d911d4c66d18df9f0b01",
+    "stage4-execution-provenance.json": "49c4c54fa10a2d9ee9d5414b7ea389dffb1184ca08715187375be1a30fa1d07f",
+    "stage4-input-evidence-manifest.tsv": "0b23b97dce82f136ea040a2b874e582009229b9fac7ef538c792feb5169bfb6b",
+    "stage4-predecision-provenance.json": "be5aacbd3790c33e461aa1150b37e492feb18d7991d6e7314c07138926b91c1d",
+    "stage4-taxonomy-decisions.tsv": "74ddebdb1ff0d2f9aedaf564c2622ce748795fdb43aa19e2bcef0c4b35788ade",
+    "successful_execution_stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "successful_execution_stdout": "5d1564ca6f89725dfc52a970d28f95a92a984d8ba625c23c541a643c449c042e"
+  },
+  "decision_row_count": 68175,
+  "execution_git_commit": "03775eb24778bd702775bdaac35752d7f7b91f56",
+  "later_stage": {
+    "chromosome_integrity_generated": true,
+    "complete_universe_generated": false,
+    "holdout_membership_generated": false,
+    "selector_outcomes_calculated": false,
+    "structural_features_calculated": false,
+    "taxonomy_resolution_generated": true
+  },
+  "operational_execution": {
+    "attempt_001": {
+      "failed_partial_directory_present": false,
+      "job_id": 2509061,
+      "run_script_sha256": "959fd79253ae1b66eb044acaa9107f53a61b5f73dce1f0ce51c090134296dcdc",
+      "scheduler_accounting_available": false,
+      "standard_stderr_empty": true,
+      "submission_record_delimiter_state": "NO_TABS_PRESERVED",
+      "submission_record_scientific_effect": "NONE",
+      "submission_record_sha256": "f214f9566c8b75c0f4432e2e758a663adb7bed694d066f1072a3a35eb0551ba1",
+      "successful_final_directory_present": true
+    }
+  },
+  "pass_count": 67957,
+  "reason_counts": {
+    "TAXONOMY_NORMALIZE_DELETED": 218,
+    "TAXONOMY_SPECIES_RESOLVED": 67957
+  },
+  "resolved_distinct_species_taxid_count": 16144,
+  "review_unresolved_count": 218,
+  "schema_version": 1,
+  "stage4_input_candidate_count": 68175,
+  "stage4_input_membership_sha256": "05c81053608a4c21fcacc80f774c92503979ee510098b8072c9e103ef07e798a",
+  "status": "STAGE4_TAXONOMY_RESOLUTION_COMPLETE",
+  "status_counts": {
+    "PASS": 67957,
+    "REVIEW_UNRESOLVED": 218
+  },
+  "unique_frozen_organism_taxid_count": 19610
+}
