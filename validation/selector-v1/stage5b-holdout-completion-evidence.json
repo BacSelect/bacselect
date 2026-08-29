@@ -1,0 +1,64 @@
+{
+  "adequacy": {
+    "minimum_genomes": 1000,
+    "minimum_species": 200,
+    "status": "ADEQUACY_PASS"
+  },
+  "artifacts_sha256": {
+    "external-decision-holdout.tsv": "ed0950e973d7d1bd2e7d294d1e5fde9cb7087e41cd54f021ac2ffe94262716c3",
+    "reconstructed-retained-absent-from-baseline.tsv": "54b06ead4b6cd650ea979fe05ddd9bbe4fdcf3ef6f1e2b557230ee8f3520439e",
+    "stage5b-aggregate-summary.json": "59c6640414156958a69fad69671eeb9d2566f4f63c3b52eaf0dba7ac252b580d",
+    "stage5b-content-manifest.tsv": "6e58b700efd2e62b928649d868104bc4e395f1a3602dd846dd0d399478f252a0",
+    "stage5b-execution-provenance.json": "32668f402395ef2e36ce2ec8c88bf4fd0a8a0b57e9c65f2df80add7cbc1c7ffd",
+    "stage5b-input-evidence-manifest.tsv": "4d3159fd1042228e5ccda68c61ae588b8a291a84bab89195fbf8dd551313e513",
+    "stage5b-predecision-provenance.json": "478d3601eab5f4ece38d154658921b4c1ee9cf67f8a5e992f6f6996af9c2efc9"
+  },
+  "bacselect_git_commit": "6489689d80ba45ee4872eeb8791ef8e42a4cee59",
+  "complete_universe": {
+    "artifact_sha256": "96118ff6556f5cdc69c1cf912a3daab5b58fa97a39a7cee96326b8819ea098e4",
+    "count": 67957,
+    "distinct_species_count": 16144,
+    "membership_sha256": "53cf615ab9d89a3457574f340f31c60576a88360608b74c419728be8e82d578a"
+  },
+  "external_holdout": {
+    "artifact_sha256": "ed0950e973d7d1bd2e7d294d1e5fde9cb7087e41cd54f021ac2ffe94262716c3",
+    "count": 12952,
+    "distinct_species_count": 3542,
+    "membership_sha256": "0998a65f617e6c1b951b52990c0e2cf8110b6327992110d862d9338f0fa06bbd"
+  },
+  "historical_inputs": {
+    "baseline_matrix_sha256": "86c0c3d49317dfc3cc452114e3863666fe2112b6a3ae8dae2090b60a2a598948",
+    "raw_source_sha256": "b1b016891ae4e976d03606dfb2f35f74b03d21cf3ec82832f77f4d113bd622d5"
+  },
+  "historical_reconstruction": {
+    "baseline_accessions": 55306,
+    "baseline_not_in_metadata_retained": 274,
+    "metadata_retained": 70477,
+    "retained_absent_from_baseline": 15445,
+    "retained_present_in_baseline": 55032
+  },
+  "identity_boundary": {
+    "identity_bearing_artifacts_retained_in_scratch_only": true,
+    "identity_bearing_rows_committed_to_git": false
+  },
+  "later_stage": {
+    "adequacy_gate_evaluated": true,
+    "baseline_membership_consulted": true,
+    "historical_absence_membership_reconstructed": true,
+    "holdout_membership_generated": true,
+    "selector_outcomes_calculated": false,
+    "structural_features_calculated": false
+  },
+  "reconstructed_absence": {
+    "artifact_sha256": "54b06ead4b6cd650ea979fe05ddd9bbe4fdcf3ef6f1e2b557230ee8f3520439e",
+    "count": 15445,
+    "membership_sha256": "4bf969782b8220e52e20e2da53128871103c5734f1102dfbda3b4208494b6cea"
+  },
+  "schema_version": 1,
+  "stage5_method_sha256": "a1741531205778b6db2c97554d598216ff3396359b77ba431444e1f96f014718",
+  "stage5a_completion_evidence_sha256": "cae7153614256a134b1f63dc200ee33615ae3b27351a0c6fd659eafde2db06d5",
+  "stage5b_helper_sha256": "9509fba9af898c1475ff40a83ccd31e02dc2da3819f36bd3481336e3ac81b2bf",
+  "stage5b_wrapper_sha256": "ed0ebd16fafe4f1cdaa8519f63d55407c7707752470621923ac5c541b81ec913",
+  "stage5b_wrapper_tests_sha256": "8b89f4fb54fdb4a9fb82f00a42f10e959732eaf537977a06fed89cb204390778",
+  "status": "STAGE5B_EXTERNAL_HOLDOUT_COMPLETE"
+}
