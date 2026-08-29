@@ -1,0 +1,49 @@
+{
+  "artifacts_sha256": {
+    "complete-eligible-fresh-universe.tsv": "96118ff6556f5cdc69c1cf912a3daab5b58fa97a39a7cee96326b8819ea098e4",
+    "stage5-terminal-composition.tsv": "96d33bc423e95b3d68fa4fc5435900e9e59b6661dfe1f75d362fc51c1749b663",
+    "stage5a-aggregate-summary.json": "bebd51ea7cbbc26b46f8b09806b38787229b73d0529d8333517ccd19d77edc66",
+    "stage5a-content-manifest.tsv": "2080bd396cf030c0d38f3742db2d832cb0dd4518ebe647d0480e161c0a052246",
+    "stage5a-execution-provenance.json": "92b7cef6cee0032a7eb7d73ab282bea177d6bac3fdb8e887bb6607f5dbce1ca8",
+    "stage5a-predecision-provenance.json": "641dec76ef3c3af62c8439e5a5afe902cbe2a51eb7aad37dad7ff7ccf9db16f0"
+  },
+  "complete_universe_count": 67957,
+  "complete_universe_membership_sha256": "53cf615ab9d89a3457574f340f31c60576a88360608b74c419728be8e82d578a",
+  "complete_universe_species_count": 16144,
+  "execution_git_commit": "c9b51d8fcb91f86fb82ca2886feb8ec793db94c1",
+  "identity_bearing_artifacts_tracked_in_git": false,
+  "later_stage": {
+    "baseline_membership_consulted": false,
+    "complete_universe_generated": true,
+    "historical_absence_membership_reconstructed": false,
+    "holdout_membership_generated": false,
+    "selector_outcomes_calculated": false,
+    "structural_features_calculated": false
+  },
+  "schema_version": 1,
+  "stage5_method_sha256": "a1741531205778b6db2c97554d598216ff3396359b77ba431444e1f96f014718",
+  "stage5a_helper_sha256": "024354a0e909e5a048fa1a408c809a3c772892c9cf9b517263bdbbe90c476bce",
+  "stage5a_wrapper_sha256": "c9851b04172a3d516e3c49b0e65d1f8b69adf2326a20e60c4610293feb8156a6",
+  "stage5a_wrapper_tests_sha256": "8907689c1126202d5bd797301bd85f9e5372b1c0b50f0414e677a7f8d2fe407c",
+  "status": "STAGE5A_COMPLETE_UNIVERSE_COMPLETE",
+  "terminal_composition_row_count": 68480,
+  "terminal_disposition_counts": {
+    "ELIGIBLE": 67957,
+    "EXCLUDED": 154,
+    "NONREPRESENTATIVE": 6,
+    "WITHHELD_UNRESOLVED": 363,
+    "total": 68480
+  },
+  "upstream_completion_evidence_sha256": {
+    "stage1": "b459801d832137fb0399bc34dfe3611636ca1ffc0339c802a16a6216f9595dd2",
+    "stage2": "d00801b1833c6c3cdee44a8c981d9eb1fc900f6becabc6d59e996877462d76a6",
+    "stage3": "c5aff0e1e5cca6202688198a49069b1ae3e7b35d19f4939538d7c3f01ff562d2",
+    "stage4": "b878dd9f20c01867b87265b9d35c23db5ad556621c5750a0193d9e1f2b5960ad"
+  },
+  "upstream_decision_artifact_sha256": {
+    "stage1": "530ccec7679db9866ae04e81f05080094ace563a530a122c8ae97251801ea96d",
+    "stage2": "3613195996b8d8d1a5d6cbb23976a5418d97666054aa8ef33601b5ac31a7979a",
+    "stage3": "13d66c0febb809d30862730eff0b419c3568fc9cdd113970ac441b0fce748f04",
+    "stage4": "74ddebdb1ff0d2f9aedaf564c2622ce748795fdb43aa19e2bcef0c4b35788ade"
+  }
+}
