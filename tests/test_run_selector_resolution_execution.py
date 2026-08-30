@@ -813,3 +813,26 @@ def test_no_decision_finalizer_imported() -> None:
 
     for value in forbidden:
         assert value not in text
+
+
+def test_corrected_execution_adapter_bindings_are_exact() -> None:
+    """Stage 7 wrapper binds the prospectively corrected adapter pair."""
+    assert wrapper.EXPECTED_EXECUTION_ADAPTER_SHA256 == (
+        "24cb559f906529d5f1599159f560463b"
+        "5226629000079e9691cd5d430a5a5ddf"
+    )
+
+    assert wrapper.EXPECTED_EXECUTION_ADAPTER_TEST_SHA256 == (
+        "1bbeb9423080f95fe4fe47d2d9239035"
+        "d6e034a44b1d37243ef6f01e3c5b3ea3"
+    )
+
+    bindings = wrapper.expected_repo_sha256()
+
+    assert bindings[
+        "src/bacselect/selector_resolution_execution.py"
+    ] == wrapper.EXPECTED_EXECUTION_ADAPTER_SHA256
+
+    assert bindings[
+        "tests/test_selector_resolution_execution.py"
+    ] == wrapper.EXPECTED_EXECUTION_ADAPTER_TEST_SHA256
