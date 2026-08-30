@@ -830,6 +830,7 @@ def _verify_ladders(
         observed_hash = sequence_hasher(
             (
                 "BacSelect-selector-v1|"
+                "final300-2400|"
                 f"{selector}|ladder|N=500"
             ),
             values,

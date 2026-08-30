@@ -170,6 +170,7 @@ def ladder_hashes(
         ] = sequence_sha256(
             (
                 "BacSelect-selector-v1|"
+                "final300-2400|"
                 f"{selector}|ladder|N=500"
             ),
             values,
@@ -1114,3 +1115,117 @@ def test_invalid_execution_mode_rejected(
             tmp_path,
             mode="wrong",
         )
+
+
+def test_verify_ladders_uses_final300_2400_namespace() -> None:
+    """Frozen final ladders use the final 300/2400 fingerprint namespace."""
+    from types import SimpleNamespace
+
+    import numpy as np
+
+    import bacselect.selector_resolution_execution as execution
+
+    accessions = [
+        f"SYNTHETIC_{index:04d}"
+        for index in range(500)
+    ]
+
+    foundation = SimpleNamespace(
+        accessions=accessions,
+    )
+
+    ladders = {
+        "OPS":
+            np.arange(
+                500,
+                dtype=np.int64,
+            ),
+        "SR":
+            np.arange(
+                499,
+                -1,
+                -1,
+                dtype=np.int64,
+            ),
+    }
+
+    expected_hashes = {
+        "OPS":
+            "1" * 64,
+        "SR":
+            "2" * 64,
+    }
+
+    expected_namespaces = {
+        "OPS":
+            (
+                "BacSelect-selector-v1|"
+                "final300-2400|"
+                "OPS|ladder|N=500"
+            ),
+        "SR":
+            (
+                "BacSelect-selector-v1|"
+                "final300-2400|"
+                "SR|ladder|N=500"
+            ),
+    }
+
+    calls = []
+
+    def fake_sequence_hasher(
+        namespace: str,
+        values: list[str],
+    ) -> str:
+        calls.append(
+            (
+                namespace,
+                tuple(values),
+            )
+        )
+
+        if namespace == expected_namespaces["OPS"]:
+            return expected_hashes["OPS"]
+
+        if namespace == expected_namespaces["SR"]:
+            return expected_hashes["SR"]
+
+        raise AssertionError(
+            "unexpected ladder fingerprint namespace: "
+            + namespace
+        )
+
+    verified = execution._verify_ladders(
+        foundation=foundation,
+        ladders=ladders,
+        expected_hashes=expected_hashes,
+        sequence_hasher=fake_sequence_hasher,
+    )
+
+    assert np.array_equal(
+        verified["OPS"],
+        ladders["OPS"],
+    )
+
+    assert np.array_equal(
+        verified["SR"],
+        ladders["SR"],
+    )
+
+    assert [
+        namespace
+        for namespace, _ in calls
+    ] == [
+        expected_namespaces["OPS"],
+        expected_namespaces["SR"],
+    ]
+
+    assert calls[0][1] == tuple(
+        accessions
+    )
+
+    assert calls[1][1] == tuple(
+        reversed(
+            accessions
+        )
+    )
