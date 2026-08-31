@@ -1,0 +1,97 @@
+name: BacSelect monthly production
+
+on:
+  schedule:
+    - cron: '17 0 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bacselect-monthly-production
+  cancel-in-progress: false
+
+jobs:
+  portability-preflight:
+    name: Portable production preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout BacSelect
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          check-latest: false
+
+      - name: Install BacSelect and test dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+
+      - name: Run BacSelect test suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pytest -q
+
+      - name: Verify production portability contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python validation/selector-v1/check_production_portability.py
+
+      - name: Verify frozen monthly release primitives
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from bacselect.monthly_release_start import derive_release_id
+
+          observed = derive_release_id(
+              "2026-09-01T00:17:00Z"
+          )
+
+          if observed != "2026.09":
+              raise SystemExit(
+                  f"unexpected release identity: {observed}"
+              )
+
+          print(
+              "PASS | frozen monthly day-01 release identity "
+              "derivation is available"
+          )
+          PY
+
+      - name: Enforce UTC day 01 for scheduled execution
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DAY="$(date -u +%d)"
+
+          if [[ "$DAY" != "01" ]]; then
+              echo "FAIL | scheduled production event is not UTC day 01"
+              exit 1
+          fi
+
+          echo "PASS | scheduled event is running on UTC day 01"
+
+      - name: Confirm preflight-only production state
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "PASS | portable monthly scheduler is active"
+          echo "PASS | source acquisition is not enabled by this workflow"
+          echo "PASS | release publication is not enabled by this workflow"
