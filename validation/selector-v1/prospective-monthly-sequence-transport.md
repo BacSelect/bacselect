@@ -186,3 +186,144 @@ manifest SHA256 -> batch-target manifest SHA256 -> accession-input SHA256`.
 
 The execution wrapper must derive these values from audited files. They are not
 independent caller assertions.
+
+## Portable execution wrapper
+
+`validation/selector-v1/run_monthly_sequence_transport.py` is the prospective
+portable Stage 3B execution wrapper.
+
+Before transport it requires:
+
+- an explicitly authorized real execution;
+- exact local `HEAD` and `origin/main`;
+- a clean working tree;
+- exact wrapper and wrapper-test identities;
+- the frozen NCBI Datasets environment identity;
+- an explicit absolute `datasets` executable;
+- successful exact-version validation for NCBI Datasets 18.35.0;
+- a fully audited Stage 1 source-snapshot record;
+- the exact Stage 1 raw source response and release-start checkpoint;
+- a fully audited Stage 2 sequence-plan record;
+- the exact Stage 2 fresh-target TSV.
+
+The Stage 2 plan record and fresh-target TSV must reside below the audited
+commit-scoped Stage 1 production root.
+
+The requested Stage 3B batch is derived internally from the complete audited
+fresh-target manifest. A caller cannot provide a substitute target slice.
+
+## Pre-network ordering
+
+For a fresh batch, the wrapper creates a `.partial` batch directory and durably
+writes:
+
+1. the identity-bearing batch-target TSV;
+2. the exact accession input;
+3. the canonical attempt-origin record with
+   `created_before_network_retrieval=true` and
+   `dehydrated_zip_sha256=null`.
+
+The attempt-origin record is read back before the Datasets download command is
+invoked.
+
+The download command, standard output, standard error and exit code are
+retained even when the download fails.
+
+## Dehydrated package
+
+Successful download alone is insufficient.
+
+The wrapper requires the dehydrated ZIP to exist, then applies the frozen ZIP
+integrity and path-safety checks during extraction. Only after successful safe
+extraction is the partial ZIP atomically promoted to `dehydrated.zip`.
+
+Its SHA256 is then bound into the attempt-origin record.
+
+## Hydration and bounded recovery
+
+The wrapper audits Stage 3 metadata identity and `fetch.txt`, records the
+initial hydration state, then executes the frozen broad Datasets rehydration
+when unresolved transport entries exist.
+
+A non-zero broad rehydration exit code is retained as evidence but is not by
+itself the scientific failure criterion.
+
+Remaining unresolved accessions receive at most two accession-specific
+rehydration attempts.
+
+Each targeted attempt records:
+
+- accession;
+- attempt number;
+- Datasets exit code;
+- unresolved destinations remaining after that attempt.
+
+After the bounded retries, any missing, empty or size-mismatched `fetch.txt`
+destination fails the batch closed.
+
+No EFetch or alternative scientific-data retrieval is permitted.
+
+## Stage 3A handoff
+
+Only a transport-complete package is handed to
+`validate_hydrated_package()`.
+
+Stage 3A failure never triggers transport repair or alternate scientific-data
+retrieval.
+
+The failed `.partial` directory is retained.
+
+## Resume semantics
+
+A `.partial` batch may be resumed only after the dehydrated download was
+completed and atomically promoted.
+
+Resume requires:
+
+- the exact same batch-target TSV;
+- the exact same accession input;
+- the same complete upstream provenance bindings;
+- the same production Git commit;
+- the same transport implementation identity;
+- the same frozen environment identity;
+- the same absolute Datasets executable;
+- an unchanged dehydrated ZIP SHA256;
+- the extracted package.
+
+An interrupted dehydrated download is not resumed in place.
+
+Broad hydration evidence is not overwritten. Targeted retry events persist, so
+the two-attempt bound applies across resume.
+
+A package that completed transport but failed Stage 3A can therefore be
+revalidated without downloading or rehydrating it again.
+
+## Successful batch evidence
+
+Before finalization the wrapper writes deterministic:
+
+- candidate sequence audit TSV;
+- component sequence audit TSV;
+- package file manifest TSV;
+- canonical batch summary JSON.
+
+The summary binds the complete upstream provenance chain, transport identities,
+ZIP and `fetch.txt` hashes, hydration and retry evidence, Stage 3A audit hashes,
+and attempt-origin hash.
+
+The completed `.partial` directory is atomically renamed to its immutable
+`batch-NNNNN` directory only after all validation and evidence-writing gates
+pass.
+
+## Current production status
+
+This wrapper is network-capable only when explicitly invoked with
+`--authorize-real-execution`.
+
+At this checkpoint:
+
+- all execution tests use injected synthetic command runners;
+- no test performs an NCBI network request;
+- the scheduled monthly GitHub Actions workflow does not invoke this wrapper;
+- real monthly source acquisition remains disabled;
+- authoritative durable publication storage remains to be frozen separately.
