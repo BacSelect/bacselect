@@ -1,0 +1,61 @@
+{
+  "analysis_execution_commit": "1083195556d63eded739c29924ce62501e9d64a6",
+  "analysis_implementation_bindings": {
+    "analysis_layer_sha256": "b228cc234e871593c1ce33e99d8bf7aa36c98fae8f7429cdf98117ded1cd81e6",
+    "analysis_layer_test_sha256": "8dc4c32ac3c087096f02a544a5d4921b2151c124709931b0a264251ba9223829",
+    "artifact_layer_sha256": "6df58f9b4e49efa4b0b7f9139b9402a2af3d2b8b7a5f0095bc9291831bf2e00a",
+    "artifact_layer_test_sha256": "74303f78169007b91b126a11c051777dd6f049d88c18e145548462849a691835",
+    "execution_adapter_sha256": "24cb559f906529d5f1599159f560463b5226629000079e9691cd5d430a5a5ddf",
+    "execution_adapter_test_sha256": "1bbeb9423080f95fe4fe47d2d9239035d6e034a44b1d37243ef6f01e3c5b3ea3",
+    "final_geometry_common_sha256": "c2534c1a8522e29362109b82416364f40cb9a8a6c4f536758867916cbe81d9f1",
+    "final_ladder_manifest_sha256": "c0f17aaa2c92c27f0b4f3aebd9ffd1be73cc403c80700b93a1b2d5786fb6b0da",
+    "geometry_sha256": "fbebf436d049be063817b717878330f38e09b3e7cb79f9dbc1b8f704af6a0d69",
+    "geometry_test_sha256": "8c215ea881985a8d7fd83b59ee3a9ce4e1ebe5a0ffe64352d2077f098ecedec1",
+    "metrics_sha256": "c83219404c627c71c900aafbb165e0a8dead27f3f04f073dbb7ce86437bb3af2",
+    "metrics_test_sha256": "80b4a8f111af9c1ebd739fd99adfb9a6b656e014bf5239f767f73ae599b036ad",
+    "ops_sha256": "eb6c1b8edab3e694b0f3825bb5ab0eaf44fdd95fdbb6a6e3e41439c18c828c0f",
+    "production_wrapper_sha256": "ca1e1a0e58e3d9878bbb48cfbaac40126907d3220c8060624ec991ab7681396c",
+    "production_wrapper_test_sha256": "fd69bfe12810638a2f433fc456b8e5cdf8b70c43b8ba6580c38c89bff191e0bb",
+    "scientific_core_sha256": "a972dd2d9e611a4c121c0cd6a9efebca9509adcf96ced3c0a02c570e4e570979",
+    "scientific_core_test_sha256": "f2f9d52902c0a8e7819fe85ba9bbe2087f44e35c2d554727fadd10729635c90b",
+    "source_truth_execution_sha256": "83b8ec7fce774c0b68cb2af982aef13904c6b64b3ee695512c578f98e5de9b92",
+    "sr_sha256": "7d3faf8a89605599e2306eea8d2d56ad690c4a588897b7446983a60e0729693b"
+  },
+  "artifact_sha256": {
+    "selector-exact-products.json": "d84eb7eef0053aaea52a77ab81740a9cc708c0d790bf32fe3a6d3aae01ee46c3",
+    "selector-primary-metrics.tsv": "7d734bf39dc9dd974d7e9947ddca2697febd933d51d456959ee3571fa72b6855",
+    "selector-resolution-analysis-summary.json": "ac1f8551ac75457f7f6d6eab8bed75a0251929ee9ed723026993a13070d39ea1"
+  },
+  "byte_identity_verification_record_sha256": "e8071eb213a716fd13d0eb747758cda3d9bc0791d07a909a4f3da0b938bde473",
+  "decision": "OPS",
+  "environment_bindings": {
+    "environment_lock_sha256": "f6f4a19c44a759705682ba4199207eaef5c2435e1b6feeddc1e4654686bc2a8c",
+    "finalizer_core_sha256": "d020cb862266e8dd3544c229dff0d77c325d8de1c4f61b4360c9db5d97a6eab1",
+    "finalizer_core_test_sha256": "980a653f18389f672fdfe287781de5e14e582df3954cb61d0f79ddc0705b908c"
+  },
+  "exact_products": {
+    "OPS": {
+      "denominator": 133499189745056880149688856635597007162669032647290798121690100488888732861290034376435130433536,
+      "numerator": 13996258574099940059131984721990361550931601638812304503150675292021031667077594702251013800247
+    },
+    "SR": {
+      "denominator": 16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008,
+      "numerator": 1970209315720202464210992444794932787757873457415852777084067615097338666114577678090121583
+    }
+  },
+  "final_ladder_sha256": {
+    "OPS": "c81d9fd30cda2d49f0f6c81d4bf99dace9fff811c7612036d9265ef90707fa13",
+    "SR": "3c703f5f898e0a13c6eb8568c0b83f5b0d19d4e374155d2d3a8a4e20378bd51f"
+  },
+  "finalizer_execution_commit": "2438dc4d0a44fc4510b7ff8f90dbed6d96fdaa14",
+  "finalizer_implementation_bindings": {
+    "implementation_sha256": "d57fcba23585bb4f6b36c28cf253d963f9ac6ac01430d934a7573fe411a670fa",
+    "test_sha256": "6380af35851c8c97b37e097b338351a2ddd5bd8a31b9a9f487812a89e10bca19"
+  },
+  "finalizer_method_sha256": "25c36098903b5fa5a18da8c012a6e81a3b4c6836a6d008d042d8b0bf529e5d8e",
+  "schema_version": 1,
+  "selector_resolution_design_sha256": "2584fddf1f06562d48abd990372ec70ea1f48da0962b1f710afb1d93e2c3223a",
+  "stage7_completion_evidence_sha256": "bec926b41538ea231b2d9f3f0825a33ab358f764b8fdf3cf448ab35faf97b9d8",
+  "stage7_method_sha256": "6f0e540cdc9def82a1645546196994817d3d75aabf8ed38a40dc062c1366ff45",
+  "status": "STAGE7_SELECTOR_DECISION_FINALIZED"
+}
