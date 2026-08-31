@@ -58,12 +58,7 @@ QUERY_START = "2032-04-01T00:00:01Z"
 QUERY_END = "2032-04-01T00:00:02Z"
 
 LAUNCHER = (
-    "/synthetic/conda",
-    "run",
-    "--no-capture-output",
-    "-n",
-    "synthetic-datasets",
-    "datasets",
+    "/synthetic/environment/bin/datasets",
 )
 
 RAW = (
@@ -116,6 +111,9 @@ def test_scientific_command_does_not_exclude_all_atypical() -> None:
 
 def test_output_root_uses_release_and_commit() -> None:
     observed = wrapper.output_root_for_release(
+        Path(
+            "/synthetic/monthly"
+        ),
         "2032.04",
         COMMIT,
     )
@@ -1070,12 +1068,12 @@ def test_environment_preflight_validates_pinned_version(
     prefix = wrapper.environment_preflight(
         tmp_path,
         command_runner=runner,
-        conda_executable="/synthetic/conda",
+        datasets_executable="/synthetic/environment/bin/datasets",
     )
 
-    assert prefix[
-        -1
-    ] == "datasets"
+    assert prefix == (
+        "/synthetic/environment/bin/datasets",
+    )
 
 
 def test_environment_preflight_refuses_version_mismatch(
@@ -1121,7 +1119,7 @@ def test_environment_preflight_refuses_version_mismatch(
         wrapper.environment_preflight(
             tmp_path,
             command_runner=runner,
-            conda_executable="/synthetic/conda",
+            datasets_executable="/synthetic/environment/bin/datasets",
         )
 
 
@@ -1138,6 +1136,10 @@ def test_main_requires_explicit_real_execution_authorization() -> None:
                 "c" * 64,
                 "--expected-wrapper-test-sha256",
                 "d" * 64,
+                "--production-root",
+                "/synthetic/monthly",
+                "--datasets-executable",
+                "/synthetic/environment/bin/datasets",
             )
         )
 
@@ -1159,3 +1161,72 @@ def test_wrapper_test_uses_only_synthetic_accessions() -> None:
     )
 
     assert "GCA_800000001.1" in source
+
+
+def test_output_root_requires_absolute_production_root() -> None:
+    with pytest.raises(
+        wrapper.MonthlyReleaseExecutionError,
+        match="production root must be an absolute path",
+    ):
+        wrapper.output_root_for_release(
+            Path(
+                "relative/monthly"
+            ),
+            "2032.04",
+            COMMIT,
+        )
+
+
+def test_environment_preflight_requires_absolute_datasets_executable(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    environment = (
+        tmp_path
+        / wrapper.ENVIRONMENT_RELATIVE
+    )
+
+    environment.parent.mkdir(
+        parents=True
+    )
+
+    environment.write_bytes(
+        b"synthetic-lock\n"
+    )
+
+    monkeypatch.setattr(
+        wrapper,
+        "EXPECTED_DATASETS_ENVIRONMENT_SHA256",
+        wrapper.sha256_file(
+            environment
+        ),
+    )
+
+    with pytest.raises(
+        wrapper.MonthlyReleaseExecutionError,
+        match="datasets executable path must be absolute",
+    ):
+        wrapper.environment_preflight(
+            tmp_path,
+            datasets_executable="relative/bin/datasets",
+        )
+
+
+def test_monthly_wrapper_has_no_institutional_execution_bindings() -> None:
+    source = WRAPPER_PATH.read_text(
+        encoding="utf-8"
+    )
+
+    forbidden = (
+        "/NGS/",
+        "Rhys_wkdir",
+        "finch-ncbi-datasets",
+        "SLURM_",
+        "sbatch",
+        "srun",
+        "self-hosted",
+        "site.env",
+    )
+
+    for token in forbidden:
+        assert token not in source

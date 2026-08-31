@@ -105,3 +105,27 @@ publish a release.
 
 Production acquisition is enabled only after the complete portable
 monthly pipeline and its publication gates have been frozen and tested.
+
+## Portable Stage 1 execution boundary
+
+The monthly source-snapshot scientific contract remains bound to the frozen
+NCBI Datasets environment and source-discovery semantics.
+
+Portable production must not encode the filesystem path or environment name
+used during selector-v1 development.
+
+The Stage 1 execution wrapper therefore receives explicitly:
+
+- an absolute production scratch root; and
+- an absolute path to the `datasets` executable reconstructed from the frozen
+  NCBI Datasets environment artefact.
+
+The wrapper verifies that the executable reports the exact frozen NCBI
+Datasets version before source acquisition.
+
+The launcher path is operational provenance and may differ between execution
+hosts. The scientific environment identity, environment SHA256, Datasets
+version and source-query arguments remain frozen.
+
+No institution-specific filesystem, named Conda environment, scheduler or
+self-hosted runner is part of the BacSelect monthly production contract.

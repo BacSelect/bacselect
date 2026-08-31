@@ -12,7 +12,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import stat
 import subprocess
 import sys
@@ -72,10 +71,6 @@ WRAPPER_TEST_RELATIVE = Path(
 
 ENVIRONMENT_RELATIVE = Path(
     "environments/ncbi-datasets-linux-64.explicit.txt"
-)
-
-MONTHLY_SCRATCH_BASE = Path(
-    "/NGS/scratch/EXT/Rhys_wkdir/bacselect/monthly"
 )
 
 CHECKPOINT_NAME = "release-start-checkpoint.json"
@@ -408,9 +403,11 @@ def validate_launcher_prefix(
             label="launcher argument",
         )
 
-    if values[
-        -1
-    ] != "datasets":
+    if Path(
+        values[
+            -1
+        ]
+    ).name != "datasets":
         raise MonthlyReleaseExecutionError(
             "launcher prefix must end with datasets"
         )
@@ -444,10 +441,10 @@ def default_command_runner(
 def environment_preflight(
     repo: Path,
     *,
+    datasets_executable: str | Path,
     command_runner: Callable[..., QueryResult] = default_command_runner,
-    conda_executable: str | None = None,
 ) -> tuple[str, ...]:
-    """Verify the pinned local Datasets environment without querying source data."""
+    """Verify the frozen Datasets environment through an explicit executable."""
     require_sha256(
         repo
         / ENVIRONMENT_RELATIVE,
@@ -455,28 +452,24 @@ def environment_preflight(
         label="NCBI Datasets explicit environment",
     )
 
-    conda = (
-        conda_executable
-        if conda_executable is not None
-        else shutil.which(
-            "conda"
-        )
+    executable = Path(
+        datasets_executable
     )
 
-    if not conda:
+    if not executable.is_absolute():
         raise MonthlyReleaseExecutionError(
-            "conda executable not found"
+            "datasets executable path must be absolute"
+        )
+
+    if executable.name != "datasets":
+        raise MonthlyReleaseExecutionError(
+            "datasets executable path must end with datasets"
         )
 
     prefix = (
         str(
-            conda
+            executable
         ),
-        "run",
-        "--no-capture-output",
-        "-n",
-        "finch-ncbi-datasets",
-        "datasets",
     )
 
     version_result = command_runner(
@@ -519,12 +512,21 @@ def environment_preflight(
         prefix
     )
 
-
 def output_root_for_release(
+    production_root: Path,
     release_id: str,
     execution_commit: str,
 ) -> Path:
-    """Return the canonical monthly production scratch root."""
+    """Return a commit-scoped output root below an explicit production root."""
+    root = Path(
+        production_root
+    )
+
+    if not root.is_absolute():
+        raise MonthlyReleaseExecutionError(
+            "production root must be an absolute path"
+        )
+
     release = validate_release_id(
         release_id
     )
@@ -535,12 +537,11 @@ def output_root_for_release(
     )
 
     return (
-        MONTHLY_SCRATCH_BASE
+        root
         / release
         / "production"
         / commit
     )
-
 
 def fsync_directory(
     path: Path,
@@ -1210,6 +1211,24 @@ def main(
     )
 
     parser.add_argument(
+        "--production-root",
+        required=True,
+        help=(
+            "Absolute scratch root for this portable "
+            "monthly production execution."
+        ),
+    )
+
+    parser.add_argument(
+        "--datasets-executable",
+        required=True,
+        help=(
+            "Absolute path to datasets from the frozen "
+            "NCBI Datasets environment."
+        ),
+    )
+
+    parser.add_argument(
         "--authorize-real-execution",
         action="store_true",
     )
@@ -1239,7 +1258,8 @@ def main(
     )
 
     launcher = environment_preflight(
-        repo
+        repo,
+        datasets_executable=args.datasets_executable,
     )
 
     # The CLI never accepts a caller-supplied release ID or source-snapshot
@@ -1251,6 +1271,9 @@ def main(
     )
 
     output_root = output_root_for_release(
+        Path(
+            args.production_root
+        ),
         release_id,
         args.expected_commit,
     )
