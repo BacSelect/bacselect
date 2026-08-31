@@ -40,10 +40,12 @@ SNAPSHOT = (
     "source-snapshot-20260901T001700Z"
 )
 
-STAGE2_SHA = "1" * 64
-ENV_SHA = "2" * 64
-IMPLEMENTATION_SHA = "3" * 64
-GIT_COMMIT = "4" * 40
+SNAPSHOT_RECORD_SHA = "0" * 64
+STAGE2_PLAN_SHA = "1" * 64
+STAGE2_SHA = "2" * 64
+ENV_SHA = "3" * 64
+IMPLEMENTATION_SHA = "4" * 64
+GIT_COMMIT = "5" * 40
 
 
 def target(
@@ -78,6 +80,12 @@ def batch(
 
     return MonthlyTransportBatch(
         source_snapshot_id=SNAPSHOT,
+        source_snapshot_record_sha256=(
+            SNAPSHOT_RECORD_SHA
+        ),
+        stage2_sequence_plan_record_sha256=(
+            STAGE2_PLAN_SHA
+        ),
         stage2_fresh_target_manifest_sha256=(
             STAGE2_SHA
         ),
@@ -676,6 +684,14 @@ def test_pre_network_attempt_binds_monthly_identity():
     ] == SNAPSHOT
 
     assert observed[
+        "source_snapshot_record_sha256"
+    ] == SNAPSHOT_RECORD_SHA
+
+    assert observed[
+        "stage2_sequence_plan_record_sha256"
+    ] == STAGE2_PLAN_SHA
+
+    assert observed[
         "stage2_fresh_target_manifest_sha256"
     ] == STAGE2_SHA
 
@@ -748,3 +764,71 @@ def test_stage3b_primitives_have_no_execution_or_historical_bindings():
 
     for token in forbidden:
         assert token not in text
+
+
+def test_batch_contract_refuses_invalid_source_snapshot_record_sha():
+    value = batch()
+
+    mutated = MonthlyTransportBatch(
+        source_snapshot_id=(
+            value.source_snapshot_id
+        ),
+        source_snapshot_record_sha256=(
+            "not-a-sha"
+        ),
+        stage2_sequence_plan_record_sha256=(
+            value.stage2_sequence_plan_record_sha256
+        ),
+        stage2_fresh_target_manifest_sha256=(
+            value.stage2_fresh_target_manifest_sha256
+        ),
+        batch_index=value.batch_index,
+        batch_count=value.batch_count,
+        batch_size=value.batch_size,
+        full_target_count=(
+            value.full_target_count
+        ),
+        targets=value.targets,
+    )
+
+    with pytest.raises(
+        MonthlySequenceTransportError,
+        match="source snapshot record SHA256",
+    ):
+        validate_batch_contract(
+            mutated
+        )
+
+
+def test_batch_contract_refuses_invalid_sequence_plan_record_sha():
+    value = batch()
+
+    mutated = MonthlyTransportBatch(
+        source_snapshot_id=(
+            value.source_snapshot_id
+        ),
+        source_snapshot_record_sha256=(
+            value.source_snapshot_record_sha256
+        ),
+        stage2_sequence_plan_record_sha256=(
+            "not-a-sha"
+        ),
+        stage2_fresh_target_manifest_sha256=(
+            value.stage2_fresh_target_manifest_sha256
+        ),
+        batch_index=value.batch_index,
+        batch_count=value.batch_count,
+        batch_size=value.batch_size,
+        full_target_count=(
+            value.full_target_count
+        ),
+        targets=value.targets,
+    )
+
+    with pytest.raises(
+        MonthlySequenceTransportError,
+        match="Stage 2 sequence-plan record SHA256",
+    ):
+        validate_batch_contract(
+            mutated
+        )

@@ -168,3 +168,21 @@ At this checkpoint:
 - no real Stage 2 batch is transported;
 - no authoritative persistence backend is yet enabled;
 - release publication remains disabled.
+
+## Upstream provenance-record binding
+
+The Stage 3B batch contract also binds the SHA256 identities of:
+
+- the audited Stage 1 `source-snapshot-record.json`; and
+- the audited Stage 2 monthly sequence-plan record.
+
+These identities are written into the pre-network attempt record before any
+Datasets download or rehydration command may execute.
+
+The complete upstream chain carried into Stage 3B is therefore:
+
+`source-snapshot record SHA256 -> sequence-plan record SHA256 -> fresh-target
+manifest SHA256 -> batch-target manifest SHA256 -> accession-input SHA256`.
+
+The execution wrapper must derive these values from audited files. They are not
+independent caller assertions.

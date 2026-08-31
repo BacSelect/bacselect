@@ -77,6 +77,8 @@ class MonthlyTransportBatch:
     """One deterministic Stage 3B batch contract."""
 
     source_snapshot_id: str
+    source_snapshot_record_sha256: str
+    stage2_sequence_plan_record_sha256: str
     stage2_fresh_target_manifest_sha256: str
     batch_index: int
     batch_count: int
@@ -187,6 +189,16 @@ def validate_batch_contract(
     _normalized_token(
         batch.source_snapshot_id,
         label="source snapshot ID",
+    )
+
+    _sha256(
+        batch.source_snapshot_record_sha256,
+        label="source snapshot record SHA256",
+    )
+
+    _sha256(
+        batch.stage2_sequence_plan_record_sha256,
+        label="Stage 2 sequence-plan record SHA256",
     )
 
     _sha256(
@@ -918,6 +930,10 @@ def build_pre_network_attempt_record(
             True,
         "source_snapshot_id":
             batch.source_snapshot_id,
+        "source_snapshot_record_sha256":
+            batch.source_snapshot_record_sha256,
+        "stage2_sequence_plan_record_sha256":
+            batch.stage2_sequence_plan_record_sha256,
         "stage2_fresh_target_manifest_sha256":
             batch.stage2_fresh_target_manifest_sha256,
         "batch_target_manifest_sha256":
