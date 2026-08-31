@@ -46,11 +46,13 @@ retained accession.
 
 No current retained accession may be absent.
 
-No catalogue accession outside the current retained metadata population may
-enter Stage 4.
+The cumulative catalogue may also contain historical cache entries for
+accessions that are no longer in the current retained metadata population.
+Those entries remain valid cache history but do not enter the current Stage 4
+population or source-truth evaluation.
 
-For every accession, catalogue BioSample must exactly equal the current
-metadata BioSample.
+For every current retained accession, catalogue BioSample must exactly equal
+the current metadata BioSample.
 
 ## Sequence eligibility precedes source truth
 

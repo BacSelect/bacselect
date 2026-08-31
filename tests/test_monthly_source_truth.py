@@ -213,30 +213,49 @@ def test_population_requires_exact_catalogue_coverage():
         )
 
 
-def test_population_rejects_catalogue_extra():
-    with pytest.raises(
-        monthly.MonthlySourceTruthError,
-        match="outside current retained metadata",
-    ):
-        population(
-            entries=(
-                entry(
-                    A1,
-                    B1,
-                    "eligible",
-                ),
-                entry(
-                    A2,
-                    B2,
-                    "ineligible",
-                ),
-                entry(
-                    A3,
-                    B3,
-                    "eligible",
-                ),
-            )
+def test_population_ignores_historical_catalogue_extra():
+    observed = population(
+        entries=(
+            entry(
+                A1,
+                B1,
+                "eligible",
+            ),
+            entry(
+                A2,
+                B2,
+                "ineligible",
+            ),
+            entry(
+                A3,
+                B3,
+                "eligible",
+            ),
         )
+    )
+
+    assert observed.retained_accessions == (
+        A1,
+        A2,
+    )
+
+    assert (
+        observed.sequence_eligible_accessions
+        == (
+            A1,
+        )
+    )
+
+    assert (
+        observed.sequence_ineligible_accessions
+        == (
+            A2,
+        )
+    )
+
+    assert A3 not in (
+        observed.retained_accessions
+    )
 
 
 def test_population_rejects_biosample_drift():

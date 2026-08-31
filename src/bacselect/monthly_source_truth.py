@@ -628,6 +628,10 @@ def _population_from_audited_catalogue(
         ]
     ] = {}
 
+    seen_catalogue_accessions: set[
+        str
+    ] = set()
+
     eligible: list[
         str
     ] = []
@@ -651,16 +655,39 @@ def _population_from_audited_catalogue(
             )
         )
 
-        if accession in entry_by_accession:
+        if accession in seen_catalogue_accessions:
             raise MonthlySourceTruthError(
                 "sequence-cache catalogue contains duplicate accession"
             )
+
+        seen_catalogue_accessions.add(
+            accession
+        )
 
         biosample = _biosample(
             value.get(
                 "biosample"
             )
         )
+
+        expected_biosample = (
+            metadata.get(
+                accession
+            )
+        )
+
+        if expected_biosample is None:
+            # The sequence-cache catalogue is cumulative. Historical
+            # cache entries that are outside the current retained
+            # metadata universe remain valid cache history but do not
+            # enter the current Stage 4 population.
+            continue
+
+        if expected_biosample != biosample:
+            raise MonthlySourceTruthError(
+                "sequence-cache catalogue BioSample differs from "
+                "current retained metadata"
+            )
 
         state = value.get(
             "origin_sequence_eligibility"
@@ -683,47 +710,19 @@ def _population_from_audited_catalogue(
             accession
         ] = value
 
-        expected_biosample = (
-            metadata.get(
-                accession
-            )
+    missing = (
+        set(
+            metadata
         )
-
-        if expected_biosample is None:
-            raise MonthlySourceTruthError(
-                "sequence-cache catalogue contains accession outside "
-                "current retained metadata"
-            )
-
-        if expected_biosample != biosample:
-            raise MonthlySourceTruthError(
-                "sequence-cache catalogue BioSample differs from "
-                "current retained metadata"
-            )
-
-    if set(
-        entry_by_accession
-    ) != set(
-        metadata
-    ):
-        missing = (
-            set(
-                metadata
-            )
-            - set(
-                entry_by_accession
-            )
+        - set(
+            entry_by_accession
         )
+    )
 
-        if missing:
-            raise MonthlySourceTruthError(
-                "current retained metadata lacks complete "
-                "sequence-cache catalogue coverage"
-            )
-
+    if missing:
         raise MonthlySourceTruthError(
-            "sequence-cache catalogue population differs "
-            "from current retained metadata"
+            "current retained metadata lacks complete "
+            "sequence-cache catalogue coverage"
         )
 
     retained = tuple(
