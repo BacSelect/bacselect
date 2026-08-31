@@ -154,3 +154,32 @@ The reconstruction layer uses a pinned micromamba implementation and must:
 The temporary environment name used by GitHub Actions is operational only.
 It is not part of the BacSelect scientific identity and is never consumed by
 the Stage 1 execution wrapper.
+
+## Checksum-authenticated environment reconstruction
+
+The original selector-v1 NCBI Datasets environment artefact remains immutable:
+
+`environments/ncbi-datasets-linux-64.explicit.txt`
+
+Its SHA256 remains:
+
+`6d965c7c4f7db0464e4fba2434f85f1b7da3f7136790babca444888b6e6096cd`
+
+Hosted production reconstruction uses the derived operational manifest:
+
+`environments/ncbi-datasets-linux-64.reconstruction.explicit.txt`
+
+Its frozen SHA256 is:
+
+`5e3b5008cf773689459acfe1ecfe0ce45bf89374f1dc3ebedd5cc3ff0f59c0e1`
+
+The derived manifest must contain exactly the same package URLs, versions and
+builds as the frozen scientific environment, with only package MD5 fragments
+added.
+
+The checksum fragments were obtained from the independently reconstructed
+GitHub-hosted environment before source acquisition was enabled.
+
+The reconstruction manifest therefore strengthens package-download
+verification without changing the frozen BacSelect scientific environment
+identity.
