@@ -51,6 +51,19 @@ REQUIRED_WORKFLOW_TOKENS = (
     "python-version: '3.11'",
     "python -m pip install -e '.[test]'",
     "python -m pytest -q",
+    (
+        "uses: mamba-org/setup-micromamba@"
+        "f457c30a868e4760d3a6fcea5f25dc655b8edf39"
+    ),
+    "micromamba-version: '2.8.1-0'",
+    (
+        "environment-file: "
+        "environments/ncbi-datasets-linux-64.explicit.txt"
+    ),
+    "environment-name: bacselect-ncbi-datasets-runtime",
+    "cache-environment: false",
+    "cache-downloads: false",
+    "datasets version: 18.35.0",
 )
 
 REQUIRED_MONTHLY_WRAPPER_TOKENS = (

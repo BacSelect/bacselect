@@ -129,3 +129,28 @@ version and source-query arguments remain frozen.
 
 No institution-specific filesystem, named Conda environment, scheduler or
 self-hosted runner is part of the BacSelect monthly production contract.
+
+## Hosted reconstruction proof
+
+Before source acquisition is enabled, the GitHub-hosted production workflow
+must reconstruct the frozen NCBI Datasets environment from:
+
+`environments/ncbi-datasets-linux-64.explicit.txt`
+
+The environment artefact retains SHA256:
+
+`6d965c7c4f7db0464e4fba2434f85f1b7da3f7136790babca444888b6e6096cd`
+
+The reconstruction layer uses a pinned micromamba implementation and must:
+
+- start from the tracked explicit environment specification;
+- use no environment cache for the reconstruction proof;
+- verify the environment-file SHA256;
+- require NCBI Datasets exactly `18.35.0`;
+- emit the reconstructed explicit package identity for audit;
+- perform no NCBI source query;
+- publish no BacSelect release.
+
+The temporary environment name used by GitHub Actions is operational only.
+It is not part of the BacSelect scientific identity and is never consumed by
+the Stage 1 execution wrapper.
