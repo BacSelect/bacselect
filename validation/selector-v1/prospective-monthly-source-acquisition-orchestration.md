@@ -159,3 +159,43 @@ At this checkpoint:
 - no monthly fresh-acquisition manifest has been generated from real data;
 - no monthly genome sequence has been downloaded;
 - no release publication is enabled.
+
+## Canonical Stage 2 provenance record
+
+Before Stage 3 transport is authorized, the monthly Stage 2 result must be
+represented by a canonical provenance record with schema
+`bacselect-monthly-sequence-plan-v1`.
+
+The record cryptographically binds:
+
+- the exact Stage 1 `source_snapshot_id`;
+- SHA256 of the audited Stage 1 `source-snapshot-record.json`;
+- retained-accession identity;
+- cache-reuse accession identity;
+- fresh-acquisition accession identity;
+- SHA256 of the exact identity-bearing fresh-target TSV;
+- dynamic fresh-target count;
+- batch size and derived batch count;
+- acquisition-reason counts.
+
+The Stage 2 provenance record is canonical newline-terminated JSON.
+
+Stage 3 must audit this record against both the verified Stage 1 source-snapshot
+record and the exact Stage 2 fresh-target manifest before deriving any
+acquisition batch.
+
+Neither `source_snapshot_id` nor the fresh-target manifest SHA may be accepted
+as unrelated caller assertions.
+
+This closes the provenance chain:
+
+`Stage 1 source-snapshot record -> Stage 2 plan record -> Stage 2 fresh-target
+manifest -> Stage 3 transport batch`.
+
+The Stage 2 provenance audit does not rely on the manifest SHA alone. It parses
+the exact fresh-target TSV and independently verifies that its row count,
+ordered accession identity and acquisition-reason counts reproduce the
+corresponding values frozen in the Stage 2 plan record.
+
+A canonical Stage 2 record and a valid fresh-target manifest are therefore
+rejected if they are individually well formed but mutually inconsistent.

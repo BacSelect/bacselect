@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -511,3 +512,476 @@ def test_fresh_target_manifest_tracks_current_metadata_after_cache_mismatch():
         target.acquisition_reason
         == CACHE_METADATA_MISMATCH
     )
+
+
+def test_sequence_plan_record_binds_source_snapshot_and_manifest():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+            assessment(
+                "GCA_000000002.1",
+                "SAMN00000002",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    snapshot_record_sha = (
+        "a" * 64
+    )
+
+    payload = (
+        serialize_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                snapshot_record_sha
+            ),
+        )
+    )
+
+    record = audit_monthly_sequence_plan_record(
+        payload,
+        source_snapshot_id=SNAPSHOT,
+        source_snapshot_record_sha256=(
+            snapshot_record_sha
+        ),
+        fresh_target_manifest=(
+            fresh_target_manifest_bytes(
+                plan
+            )
+        ),
+    )
+
+    assert record[
+        "source_snapshot_id"
+    ] == SNAPSHOT
+
+    assert record[
+        "source_snapshot_record_sha256"
+    ] == snapshot_record_sha
+
+    assert record[
+        "fresh_acquisition_count"
+    ] == 2
+
+    assert record[
+        "fresh_batch_count"
+    ] == 1
+
+
+def test_sequence_plan_record_is_canonical_and_deterministic():
+    from bacselect.monthly_sequence_plan import (
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    first = serialize_monthly_sequence_plan_record(
+        plan,
+        source_snapshot_record_sha256=(
+            "b" * 64
+        ),
+    )
+
+    second = serialize_monthly_sequence_plan_record(
+        plan,
+        source_snapshot_record_sha256=(
+            "b" * 64
+        ),
+    )
+
+    assert first == second
+    assert first.endswith(
+        b"\n"
+    )
+
+
+def test_sequence_plan_record_refuses_wrong_source_snapshot():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = (
+        serialize_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                "c" * 64
+            ),
+        )
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="source snapshot changed",
+    ):
+        audit_monthly_sequence_plan_record(
+            payload,
+            source_snapshot_id=(
+                "different-source-snapshot"
+            ),
+            source_snapshot_record_sha256=(
+                "c" * 64
+            ),
+            fresh_target_manifest=(
+                fresh_target_manifest_bytes(
+                    plan
+                )
+            ),
+        )
+
+
+def test_sequence_plan_record_refuses_wrong_stage1_record_sha():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = (
+        serialize_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                "d" * 64
+            ),
+        )
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="source-snapshot record fingerprint changed",
+    ):
+        audit_monthly_sequence_plan_record(
+            payload,
+            source_snapshot_id=SNAPSHOT,
+            source_snapshot_record_sha256=(
+                "e" * 64
+            ),
+            fresh_target_manifest=(
+                fresh_target_manifest_bytes(
+                    plan
+                )
+            ),
+        )
+
+
+def test_sequence_plan_record_refuses_wrong_fresh_manifest():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = (
+        serialize_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                "f" * 64
+            ),
+        )
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="fresh-target manifest fingerprint changed",
+    ):
+        audit_monthly_sequence_plan_record(
+            payload,
+            source_snapshot_id=SNAPSHOT,
+            source_snapshot_record_sha256=(
+                "f" * 64
+            ),
+            fresh_target_manifest=(
+                b"canonical_genbank_assembly_accession"
+                b"\tsource_biosample"
+                b"\tacquisition_reason\n"
+            ),
+        )
+
+
+def test_sequence_plan_record_contains_no_historical_population_constant():
+    from bacselect.monthly_sequence_plan import (
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = (
+        serialize_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                "1" * 64
+            ),
+        )
+    )
+
+    assert b"15326" not in payload
+    assert b"31" not in payload
+
+
+def test_sequence_plan_record_refuses_fresh_count_not_matching_manifest():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = serialize_monthly_sequence_plan_record(
+        plan,
+        source_snapshot_record_sha256=(
+            "2" * 64
+        ),
+    )
+
+    record = json.loads(
+        payload.decode(
+            "ascii"
+        )
+    )
+
+    record[
+        "fresh_acquisition_count"
+    ] = 2
+
+    mutated = (
+        json.dumps(
+            record,
+            sort_keys=True,
+            separators=(
+                ",",
+                ":",
+            ),
+            ensure_ascii=True,
+        )
+        + "\n"
+    ).encode(
+        "ascii"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="fresh count does not match",
+    ):
+        audit_monthly_sequence_plan_record(
+            mutated,
+            source_snapshot_id=SNAPSHOT,
+            source_snapshot_record_sha256=(
+                "2" * 64
+            ),
+            fresh_target_manifest=(
+                fresh_target_manifest_bytes(
+                    plan
+                )
+            ),
+        )
+
+
+def test_sequence_plan_record_refuses_fresh_accession_sha_not_matching_manifest():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = serialize_monthly_sequence_plan_record(
+        plan,
+        source_snapshot_record_sha256=(
+            "3" * 64
+        ),
+    )
+
+    record = json.loads(
+        payload.decode(
+            "ascii"
+        )
+    )
+
+    record[
+        "fresh_acquisition_accessions_sha256"
+    ] = "0" * 64
+
+    mutated = (
+        json.dumps(
+            record,
+            sort_keys=True,
+            separators=(
+                ",",
+                ":",
+            ),
+            ensure_ascii=True,
+        )
+        + "\n"
+    ).encode(
+        "ascii"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="fresh accession fingerprint",
+    ):
+        audit_monthly_sequence_plan_record(
+            mutated,
+            source_snapshot_id=SNAPSHOT,
+            source_snapshot_record_sha256=(
+                "3" * 64
+            ),
+            fresh_target_manifest=(
+                fresh_target_manifest_bytes(
+                    plan
+                )
+            ),
+        )
+
+
+def test_sequence_plan_record_refuses_reason_counts_not_matching_manifest():
+    from bacselect.monthly_sequence_plan import (
+        audit_monthly_sequence_plan_record,
+        fresh_target_manifest_bytes,
+        serialize_monthly_sequence_plan_record,
+    )
+
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    payload = serialize_monthly_sequence_plan_record(
+        plan,
+        source_snapshot_record_sha256=(
+            "4" * 64
+        ),
+    )
+
+    record = json.loads(
+        payload.decode(
+            "ascii"
+        )
+    )
+
+    record[
+        "fresh_acquisition_reason_counts"
+    ] = {
+        "cache_metadata_mismatch":
+            1,
+    }
+
+    mutated = (
+        json.dumps(
+            record,
+            sort_keys=True,
+            separators=(
+                ",",
+                ":",
+            ),
+            ensure_ascii=True,
+        )
+        + "\n"
+    ).encode(
+        "ascii"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="acquisition-reason counts",
+    ):
+        audit_monthly_sequence_plan_record(
+            mutated,
+            source_snapshot_id=SNAPSHOT,
+            source_snapshot_record_sha256=(
+                "4" * 64
+            ),
+            fresh_target_manifest=(
+                fresh_target_manifest_bytes(
+                    plan
+                )
+            ),
+        )

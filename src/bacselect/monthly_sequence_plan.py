@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import json
 import re
 from typing import Iterable
 
@@ -564,3 +565,572 @@ def blinded_plan_summary(
             plan.fresh_batches
         ),
     }
+
+
+MONTHLY_SEQUENCE_PLAN_RECORD_SCHEMA = (
+    "bacselect-monthly-sequence-plan-v1"
+)
+
+
+def _canonical_json_bytes(
+    payload: object,
+) -> bytes:
+    """Serialize canonical newline-terminated JSON."""
+
+    return (
+        json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(
+                ",",
+                ":",
+            ),
+            ensure_ascii=True,
+        )
+        + "\n"
+    ).encode(
+        "ascii"
+    )
+
+
+def _accession_sha256(
+    accessions: tuple[str, ...],
+) -> str:
+    return hashlib.sha256(
+        accession_manifest_bytes(
+            accessions
+        )
+    ).hexdigest()
+
+
+def build_monthly_sequence_plan_record(
+    plan: MonthlySequencePlan,
+    *,
+    source_snapshot_record_sha256: str,
+) -> dict[str, object]:
+    """Build immutable Stage 2 provenance binding Stage 1 to Stage 3."""
+
+    snapshot_record_sha = _sha256(
+        source_snapshot_record_sha256,
+        label="source snapshot record SHA256",
+    )
+
+    source_snapshot_id = _nonempty_text(
+        plan.source_snapshot_id,
+        label="source snapshot ID",
+    )
+
+    retained = tuple(
+        plan.retained_accessions
+    )
+
+    cache_reuse = tuple(
+        plan.cache_reuse_accessions
+    )
+
+    fresh = tuple(
+        plan.fresh_acquisition_accessions
+    )
+
+    if (
+        tuple(
+            target.canonical_genbank_assembly_accession
+            for target in plan.fresh_acquisition_targets
+        )
+        != fresh
+    ):
+        raise ValueError(
+            "fresh acquisition target identity changed"
+        )
+
+    if set(
+        cache_reuse
+    ) & set(
+        fresh
+    ):
+        raise ValueError(
+            "cache-reuse and fresh accessions overlap"
+        )
+
+    if set(
+        cache_reuse
+    ) | set(
+        fresh
+    ) != set(
+        retained
+    ):
+        raise ValueError(
+            "Stage 2 partition is not exhaustive"
+        )
+
+    fresh_manifest = (
+        fresh_target_manifest_bytes(
+            plan
+        )
+    )
+
+    reason_counts: dict[
+        str,
+        int,
+    ] = {}
+
+    for target in plan.fresh_acquisition_targets:
+        reason_counts[
+            target.acquisition_reason
+        ] = (
+            reason_counts.get(
+                target.acquisition_reason,
+                0,
+            )
+            + 1
+        )
+
+    return {
+        "schema_version":
+            MONTHLY_SEQUENCE_PLAN_RECORD_SCHEMA,
+        "source_snapshot_id":
+            source_snapshot_id,
+        "source_snapshot_record_sha256":
+            snapshot_record_sha,
+        "retained_count":
+            len(
+                retained
+            ),
+        "cache_reuse_count":
+            len(
+                cache_reuse
+            ),
+        "fresh_acquisition_count":
+            len(
+                fresh
+            ),
+        "retained_accessions_sha256":
+            _accession_sha256(
+                retained
+            ),
+        "cache_reuse_accessions_sha256":
+            _accession_sha256(
+                cache_reuse
+            ),
+        "fresh_acquisition_accessions_sha256":
+            _accession_sha256(
+                fresh
+            ),
+        "fresh_target_manifest_sha256":
+            hashlib.sha256(
+                fresh_manifest
+            ).hexdigest(),
+        "fresh_batch_size":
+            FRESH_BATCH_SIZE,
+        "fresh_batch_count":
+            len(
+                plan.fresh_batches
+            ),
+        "fresh_acquisition_reason_counts":
+            dict(
+                sorted(
+                    reason_counts.items()
+                )
+            ),
+    }
+
+
+def serialize_monthly_sequence_plan_record(
+    plan: MonthlySequencePlan,
+    *,
+    source_snapshot_record_sha256: str,
+) -> bytes:
+    """Serialize immutable canonical Stage 2 provenance."""
+
+    return _canonical_json_bytes(
+        build_monthly_sequence_plan_record(
+            plan,
+            source_snapshot_record_sha256=(
+                source_snapshot_record_sha256
+            ),
+        )
+    )
+
+
+def _audit_fresh_target_manifest_bytes(
+    payload: bytes,
+) -> tuple[
+    tuple[str, ...],
+    dict[str, int],
+]:
+    """Audit exact Stage 2 fresh-target TSV content."""
+
+    if not isinstance(
+        payload,
+        bytes,
+    ):
+        raise TypeError(
+            "fresh-target manifest must be bytes"
+        )
+
+    try:
+        text = payload.decode(
+            "ascii"
+        )
+    except UnicodeDecodeError as exc:
+        raise ValueError(
+            "fresh-target manifest must be ASCII"
+        ) from exc
+
+    if not text.endswith(
+        "\n"
+    ):
+        raise ValueError(
+            "fresh-target manifest must be newline terminated"
+        )
+
+    lines = text.splitlines()
+
+    if not lines:
+        raise ValueError(
+            "fresh-target manifest is empty"
+        )
+
+    expected_header = "\t".join(
+        FRESH_TARGET_FIELDS
+    )
+
+    if lines[0] != expected_header:
+        raise ValueError(
+            "fresh-target manifest schema changed"
+        )
+
+    accessions: list[str] = []
+    reasons: dict[str, int] = {}
+
+    allowed_reasons = {
+        NO_VERIFIED_CACHE,
+        CACHE_NOT_CURRENT,
+        CACHE_METADATA_MISMATCH,
+    }
+
+    for line_number, line in enumerate(
+        lines[1:],
+        2,
+    ):
+        fields = line.split(
+            "\t"
+        )
+
+        if len(
+            fields
+        ) != 3:
+            raise ValueError(
+                "fresh-target manifest row does not "
+                f"have three fields at line {line_number}"
+            )
+
+        (
+            accession,
+            biosample,
+            reason,
+        ) = fields
+
+        if CANONICAL_GCA_RE.fullmatch(
+            accession
+        ) is None:
+            raise ValueError(
+                "fresh-target manifest contains invalid "
+                f"canonical GCA at line {line_number}"
+            )
+
+        if BIOSAMPLE_RE.fullmatch(
+            biosample
+        ) is None:
+            raise ValueError(
+                "fresh-target manifest contains invalid "
+                f"BioSample at line {line_number}"
+            )
+
+        if reason not in allowed_reasons:
+            raise ValueError(
+                "fresh-target manifest contains invalid "
+                f"acquisition reason at line {line_number}"
+            )
+
+        accessions.append(
+            accession
+        )
+
+        reasons[
+            reason
+        ] = (
+            reasons.get(
+                reason,
+                0,
+            )
+            + 1
+        )
+
+    accession_tuple = tuple(
+        accessions
+    )
+
+    if accession_tuple != tuple(
+        sorted(
+            accession_tuple
+        )
+    ):
+        raise ValueError(
+            "fresh-target manifest accessions are not "
+            "lexicographically sorted"
+        )
+
+    if len(
+        accession_tuple
+    ) != len(
+        set(
+            accession_tuple
+        )
+    ):
+        raise ValueError(
+            "fresh-target manifest contains duplicate accessions"
+        )
+
+    return (
+        accession_tuple,
+        dict(
+            sorted(
+                reasons.items()
+            )
+        ),
+    )
+
+
+def audit_monthly_sequence_plan_record(
+    payload: bytes,
+    *,
+    source_snapshot_id: str,
+    source_snapshot_record_sha256: str,
+    fresh_target_manifest: bytes,
+) -> dict[str, object]:
+    """Audit Stage 2 provenance against Stage 1 and exact Stage 2 TSV."""
+
+    if not isinstance(
+        payload,
+        bytes,
+    ):
+        raise TypeError(
+            "monthly sequence-plan record must be bytes"
+        )
+
+    try:
+        record = json.loads(
+            payload.decode(
+                "ascii"
+            )
+        )
+    except (
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+    ) as exc:
+        raise ValueError(
+            "invalid monthly sequence-plan record"
+        ) from exc
+
+    if not isinstance(
+        record,
+        dict,
+    ):
+        raise ValueError(
+            "monthly sequence-plan record must be a JSON object"
+        )
+
+    if _canonical_json_bytes(
+        record
+    ) != payload:
+        raise ValueError(
+            "monthly sequence-plan record is not canonical JSON"
+        )
+
+    expected_keys = {
+        "schema_version",
+        "source_snapshot_id",
+        "source_snapshot_record_sha256",
+        "retained_count",
+        "cache_reuse_count",
+        "fresh_acquisition_count",
+        "retained_accessions_sha256",
+        "cache_reuse_accessions_sha256",
+        "fresh_acquisition_accessions_sha256",
+        "fresh_target_manifest_sha256",
+        "fresh_batch_size",
+        "fresh_batch_count",
+        "fresh_acquisition_reason_counts",
+    }
+
+    if set(
+        record
+    ) != expected_keys:
+        raise ValueError(
+            "monthly sequence-plan record key set changed"
+        )
+
+    if record.get(
+        "schema_version"
+    ) != MONTHLY_SEQUENCE_PLAN_RECORD_SCHEMA:
+        raise ValueError(
+            "monthly sequence-plan record schema changed"
+        )
+
+    expected_snapshot_id = _nonempty_text(
+        source_snapshot_id,
+        label="source snapshot ID",
+    )
+
+    if record.get(
+        "source_snapshot_id"
+    ) != expected_snapshot_id:
+        raise ValueError(
+            "monthly sequence-plan source snapshot changed"
+        )
+
+    expected_snapshot_record_sha = _sha256(
+        source_snapshot_record_sha256,
+        label="source snapshot record SHA256",
+    )
+
+    if record.get(
+        "source_snapshot_record_sha256"
+    ) != expected_snapshot_record_sha:
+        raise ValueError(
+            "monthly sequence-plan source-snapshot record fingerprint changed"
+        )
+
+    if not isinstance(
+        fresh_target_manifest,
+        bytes,
+    ):
+        raise TypeError(
+            "fresh-target manifest must be bytes"
+        )
+
+    expected_manifest_sha = hashlib.sha256(
+        fresh_target_manifest
+    ).hexdigest()
+
+    if record.get(
+        "fresh_target_manifest_sha256"
+    ) != expected_manifest_sha:
+        raise ValueError(
+            "monthly sequence-plan fresh-target manifest fingerprint changed"
+        )
+
+    (
+        manifest_accessions,
+        manifest_reason_counts,
+    ) = _audit_fresh_target_manifest_bytes(
+        fresh_target_manifest
+    )
+
+    manifest_fresh_count = len(
+        manifest_accessions
+    )
+
+    if record.get(
+        "fresh_acquisition_count"
+    ) != manifest_fresh_count:
+        raise ValueError(
+            "monthly sequence-plan fresh count does not "
+            "match fresh-target manifest"
+        )
+
+    manifest_accessions_sha = _accession_sha256(
+        manifest_accessions
+    )
+
+    if record.get(
+        "fresh_acquisition_accessions_sha256"
+    ) != manifest_accessions_sha:
+        raise ValueError(
+            "monthly sequence-plan fresh accession fingerprint "
+            "does not match fresh-target manifest"
+        )
+
+    if record.get(
+        "fresh_acquisition_reason_counts"
+    ) != manifest_reason_counts:
+        raise ValueError(
+            "monthly sequence-plan acquisition-reason counts "
+            "do not match fresh-target manifest"
+        )
+
+    if record.get(
+        "fresh_batch_size"
+    ) != FRESH_BATCH_SIZE:
+        raise ValueError(
+            "monthly sequence-plan batch size changed"
+        )
+
+    fresh_count = record.get(
+        "fresh_acquisition_count"
+    )
+
+    batch_count = record.get(
+        "fresh_batch_count"
+    )
+
+    if (
+        isinstance(
+            fresh_count,
+            bool,
+        )
+        or not isinstance(
+            fresh_count,
+            int,
+        )
+        or fresh_count < 0
+    ):
+        raise ValueError(
+            "monthly sequence-plan fresh count is invalid"
+        )
+
+    if (
+        isinstance(
+            batch_count,
+            bool,
+        )
+        or not isinstance(
+            batch_count,
+            int,
+        )
+        or batch_count < 0
+    ):
+        raise ValueError(
+            "monthly sequence-plan batch count is invalid"
+        )
+
+    expected_batch_count = (
+        (
+            fresh_count
+            + FRESH_BATCH_SIZE
+            - 1
+        )
+        // FRESH_BATCH_SIZE
+        if fresh_count
+        else 0
+    )
+
+    if batch_count != expected_batch_count:
+        raise ValueError(
+            "monthly sequence-plan batch count does not match fresh count"
+        )
+
+    for field in (
+        "retained_accessions_sha256",
+        "cache_reuse_accessions_sha256",
+        "fresh_acquisition_accessions_sha256",
+    ):
+        _sha256(
+            record.get(
+                field
+            ),
+            label=field,
+        )
+
+    return record
