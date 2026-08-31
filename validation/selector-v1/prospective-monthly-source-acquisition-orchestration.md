@@ -95,6 +95,33 @@ fresh-acquisition count and are never frozen globally.
 
 Stage 2 writes no network result and performs no source download.
 
+## Identity-bearing Stage 2 output contract
+
+The monthly plan retains the exact Stage 1 source-snapshot identity from which
+the metadata assessments were derived.
+
+For every source requiring fresh sequence acquisition, Stage 2 retains:
+
+- canonical GenBank assembly accession.version;
+- current source BioSample;
+- acquisition reason.
+
+The canonical identity-bearing fresh-target manifest is TSV with the exact
+columns:
+
+`canonical_genbank_assembly_accession`, `source_biosample`,
+`acquisition_reason`.
+
+Rows are emitted in lexicographic accession order and the exact manifest bytes
+are SHA256-addressable.
+
+Stage 3 must consume that expected BioSample rather than reconstructing or
+guessing it from a later NCBI response. The returned Stage 3 metadata must
+reconcile exactly to the Stage 2 expectation.
+
+The source-snapshot identity is carried separately by the Stage 2 plan and must
+be bound into Stage 3 provenance.
+
 ## Network boundary
 
 `src/bacselect/monthly_sequence_plan.py` is a pure planning layer.

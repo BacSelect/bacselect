@@ -29,6 +29,12 @@ NO_VERIFIED_CACHE = "no_verified_cache"
 CACHE_NOT_CURRENT = "cache_not_verified_for_current_snapshot"
 CACHE_METADATA_MISMATCH = "cache_metadata_mismatch"
 
+FRESH_TARGET_FIELDS = (
+    "canonical_genbank_assembly_accession",
+    "source_biosample",
+    "acquisition_reason",
+)
+
 
 @dataclass(frozen=True)
 class VerifiedMonthlyCacheEvidence:
@@ -52,11 +58,25 @@ class VerifiedMonthlyCacheEvidence:
 
 
 @dataclass(frozen=True)
+class MonthlyFreshAcquisitionTarget:
+    """One current monthly source requiring fresh sequence acquisition."""
+
+    canonical_genbank_assembly_accession: str
+    source_biosample: str
+    acquisition_reason: str
+
+
+@dataclass(frozen=True)
 class MonthlySequencePlan:
     """Deterministic monthly cache/fresh partition."""
 
+    source_snapshot_id: str
     retained_accessions: tuple[str, ...]
     cache_reuse_accessions: tuple[str, ...]
+    fresh_acquisition_targets: tuple[
+        MonthlyFreshAcquisitionTarget,
+        ...,
+    ]
     fresh_acquisition_accessions: tuple[str, ...]
     fresh_reasons: tuple[tuple[str, str], ...]
     fresh_batches: tuple[tuple[str, ...], ...]
@@ -327,7 +347,34 @@ def build_monthly_sequence_plan(
 
     cache_reuse: list[str] = []
     fresh: list[str] = []
+    fresh_targets: list[
+        MonthlyFreshAcquisitionTarget
+    ] = []
     reasons: list[tuple[str, str]] = []
+
+    def mark_fresh(
+        accession: str,
+        biosample: str,
+        reason: str,
+    ) -> None:
+        fresh.append(
+            accession
+        )
+        reasons.append(
+            (
+                accession,
+                reason,
+            )
+        )
+        fresh_targets.append(
+            MonthlyFreshAcquisitionTarget(
+                canonical_genbank_assembly_accession=(
+                    accession
+                ),
+                source_biosample=biosample,
+                acquisition_reason=reason,
+            )
+        )
 
     for accession in sorted(retained):
         biosample = retained[accession]
@@ -337,14 +384,10 @@ def build_monthly_sequence_plan(
         )
 
         if evidence is None:
-            fresh.append(
-                accession
-            )
-            reasons.append(
-                (
-                    accession,
-                    NO_VERIFIED_CACHE,
-                )
+            mark_fresh(
+                accession,
+                biosample,
+                NO_VERIFIED_CACHE,
             )
             continue
 
@@ -352,26 +395,18 @@ def build_monthly_sequence_plan(
             evidence.verified_source_snapshot_id
             != current_snapshot
         ):
-            fresh.append(
-                accession
-            )
-            reasons.append(
-                (
-                    accession,
-                    CACHE_NOT_CURRENT,
-                )
+            mark_fresh(
+                accession,
+                biosample,
+                CACHE_NOT_CURRENT,
             )
             continue
 
         if evidence.biosample != biosample:
-            fresh.append(
-                accession
-            )
-            reasons.append(
-                (
-                    accession,
-                    CACHE_METADATA_MISMATCH,
-                )
+            mark_fresh(
+                accession,
+                biosample,
+                CACHE_METADATA_MISMATCH,
             )
             continue
 
@@ -410,9 +445,13 @@ def build_monthly_sequence_plan(
         )
 
     return MonthlySequencePlan(
+        source_snapshot_id=current_snapshot,
         retained_accessions=retained_accessions,
         cache_reuse_accessions=(
             cache_reuse_accessions
+        ),
+        fresh_acquisition_targets=tuple(
+            fresh_targets
         ),
         fresh_acquisition_accessions=(
             fresh_acquisition_accessions
@@ -425,6 +464,82 @@ def build_monthly_sequence_plan(
             batch_size=batch_size,
         ),
     )
+
+
+def fresh_target_manifest_bytes(
+    plan: MonthlySequencePlan,
+) -> bytes:
+    """Return canonical monthly fresh-target TSV bytes."""
+
+    target_accessions = tuple(
+        target.canonical_genbank_assembly_accession
+        for target in plan.fresh_acquisition_targets
+    )
+
+    if (
+        target_accessions
+        != plan.fresh_acquisition_accessions
+    ):
+        raise ValueError(
+            "fresh target rows do not match fresh acquisition accessions"
+        )
+
+    allowed_reasons = {
+        NO_VERIFIED_CACHE,
+        CACHE_NOT_CURRENT,
+        CACHE_METADATA_MISMATCH,
+    }
+
+    rows = [
+        "\t".join(
+            FRESH_TARGET_FIELDS
+        )
+        + "\n"
+    ]
+
+    for target in plan.fresh_acquisition_targets:
+        accession = (
+            target.canonical_genbank_assembly_accession
+        )
+
+        if CANONICAL_GCA_RE.fullmatch(accession) is None:
+            raise ValueError(
+                "fresh target has invalid canonical GCA accession"
+            )
+
+        if BIOSAMPLE_RE.fullmatch(
+            target.source_biosample
+        ) is None:
+            raise ValueError(
+                "fresh target has invalid source BioSample"
+            )
+
+        if target.acquisition_reason not in allowed_reasons:
+            raise ValueError(
+                "fresh target has invalid acquisition reason"
+            )
+
+        rows.append(
+            f"{accession}\t"
+            f"{target.source_biosample}\t"
+            f"{target.acquisition_reason}\n"
+        )
+
+    return "".join(
+        rows
+    ).encode("ascii")
+
+
+def fresh_target_manifest_sha256(
+    plan: MonthlySequencePlan,
+) -> str:
+    """Return SHA256 of canonical monthly fresh-target TSV."""
+
+    return hashlib.sha256(
+        fresh_target_manifest_bytes(
+            plan
+        )
+    ).hexdigest()
 
 
 def blinded_plan_summary(

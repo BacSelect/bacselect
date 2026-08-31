@@ -15,6 +15,8 @@ from bacselect.monthly_sequence_plan import (
     batch_accessions,
     blinded_plan_summary,
     build_monthly_sequence_plan,
+    fresh_target_manifest_bytes,
+    fresh_target_manifest_sha256,
 )
 from bacselect.source_eligibility import (
     EXCLUDE,
@@ -387,3 +389,125 @@ def test_monthly_planner_has_no_network_execution_surface():
         "http.client",
     ):
         assert token not in text
+
+
+def test_plan_preserves_source_snapshot_identity():
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    assert plan.source_snapshot_id == SNAPSHOT
+
+
+def test_fresh_target_preserves_expected_biosample_and_reason():
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    assert len(
+        plan.fresh_acquisition_targets
+    ) == 1
+
+    target = (
+        plan.fresh_acquisition_targets[0]
+    )
+
+    assert (
+        target.canonical_genbank_assembly_accession
+        == "GCA_000000001.1"
+    )
+    assert (
+        target.source_biosample
+        == "SAMN00000001"
+    )
+    assert (
+        target.acquisition_reason
+        == NO_VERIFIED_CACHE
+    )
+
+
+def test_fresh_target_manifest_bytes_are_exact_and_deterministic():
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+            assessment(
+                "GCA_000000002.1",
+                "SAMN00000002",
+            ),
+        ),
+        (),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    observed = fresh_target_manifest_bytes(
+        plan
+    )
+
+    assert observed == (
+        b"canonical_genbank_assembly_accession"
+        b"\tsource_biosample"
+        b"\tacquisition_reason\n"
+        b"GCA_000000001.1"
+        b"\tSAMN00000001"
+        b"\tno_verified_cache\n"
+        b"GCA_000000002.1"
+        b"\tSAMN00000002"
+        b"\tno_verified_cache\n"
+    )
+
+    assert (
+        fresh_target_manifest_sha256(
+            plan
+        )
+        == fresh_target_manifest_sha256(
+            plan
+        )
+    )
+
+
+def test_fresh_target_manifest_tracks_current_metadata_after_cache_mismatch():
+    plan = build_monthly_sequence_plan(
+        (
+            assessment(
+                "GCA_000000001.1",
+                "SAMN00000002",
+            ),
+        ),
+        (
+            cache_evidence(
+                "GCA_000000001.1",
+                "SAMN00000001",
+            ),
+        ),
+        source_snapshot_id=SNAPSHOT,
+    )
+
+    target = (
+        plan.fresh_acquisition_targets[0]
+    )
+
+    assert (
+        target.source_biosample
+        == "SAMN00000002"
+    )
+    assert (
+        target.acquisition_reason
+        == CACHE_METADATA_MISMATCH
+    )
