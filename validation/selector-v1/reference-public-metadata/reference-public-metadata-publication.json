@@ -1,0 +1,27 @@
+{
+  "architecture_schema_version": 1,
+  "column_count": 19,
+  "generator_git_commit": "b1d664c429c5300eadd81709284cd7ee3fb9cb60",
+  "generator_module": "src/bacselect/public_reference_metadata.py",
+  "metadata_ladder_file": "selector-v1-reference-metadata-ladder-n500.tsv",
+  "metadata_ladder_sha256": "c1b74d0617722a61c5828c690d4ec8e9dbcdd308895a0962506722a1cc3e3c2f",
+  "metadata_schema_version": "bacselect-selector-v1-reference-public-metadata-v1",
+  "monthly_release_assigned": false,
+  "panel_generation_provenance_sha256": "97f5c1b7a524e8bb3081a1ab7cb52d96fef38d0a63e86719dc0eb91c81335f36",
+  "panel_generation_summary_sha256": "c5d3760cd5190c818348c3caf341bbecb3af514b31e8bfca4742db6ea625dc0f",
+  "panel_identity": "selector-v1-reference",
+  "row_count": 500,
+  "schema_version": "bacselect-selector-v1-reference-public-metadata-publication-v1",
+  "selector": "OPS",
+  "selector_execution_git_commit": "3ebce24ac4d1c620e9dde8c84f0c92fea9cc9e01",
+  "selector_version": "1.0.0",
+  "source_snapshot_sha256": "b1b016891ae4e976d03606dfb2f35f74b03d21cf3ec82832f77f4d113bd622d5",
+  "species_mapping_sha256": "f0343238930e957f82bc28997a216ab3a8967d007b3d3471679e3f054c76af6c",
+  "taxonomy_difference_counts": {
+    "name": 48,
+    "taxid": 48
+  },
+  "taxonomy_snapshot_sha256": "005d1b674bb12719c003652c867486f83a5c860b4beb1016adf17f3c56c2d844",
+  "winning_ladder_file_sha256": "8248be8c69ec1433886c55649cdce3149cde17dc11f0f3ac8677c5052f58caf6",
+  "winning_ladder_sha256": "c81d9fd30cda2d49f0f6c81d4bf99dace9fff811c7612036d9265ef90707fa13"
+}
