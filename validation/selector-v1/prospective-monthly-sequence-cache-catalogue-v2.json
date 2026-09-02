@@ -1,0 +1,211 @@
+{
+  "schema_version": "bacselect-prospective-monthly-sequence-cache-catalogue-v2-design-v1",
+  "status": "PROSPECTIVE_FROZEN_DESIGN",
+  "purpose": "Define a recovery-aware cumulative monthly sequence-cache catalogue without modifying cache v1 or erasing authoritative provider provenance.",
+  "implementation": {
+    "v1_core_must_remain_unchanged": "src/bacselect/monthly_sequence_cache_catalogue.py",
+    "v1_wrapper_must_remain_unchanged": "validation/selector-v1/run_monthly_sequence_cache_catalogue.py",
+    "planned_v2_core": "src/bacselect/monthly_sequence_cache_catalogue_v2.py",
+    "planned_v2_core_test": "tests/test_monthly_sequence_cache_catalogue_v2.py",
+    "planned_v2_wrapper": "validation/selector-v1/run_monthly_sequence_cache_catalogue_v2.py",
+    "planned_v2_wrapper_test": "tests/test_run_monthly_sequence_cache_catalogue_v2.py"
+  },
+  "catalogue_contract": {
+    "schema_version": "bacselect-monthly-sequence-cache-catalogue-v2",
+    "status": "SEQUENCE_CACHE_CATALOGUE_COMPLETE",
+    "completion_schema": "bacselect-monthly-sequence-acquisition-completion-v2",
+    "completion_artifact_name": "sequence-acquisition-completion-v2.json",
+    "source_classes": [
+      "fresh",
+      "fresh-recovery"
+    ],
+    "commit_identities": [
+      "source_production_commit",
+      "completion_execution_commit",
+      "cache_execution_commit"
+    ],
+    "must_preserve_source_class_counts": true,
+    "must_bind_current_population_to_completion_fresh_acquisition_count": true
+  },
+  "authority": {
+    "cache_wrapper_must_resolve_authority_independently": true,
+    "completion_is_required_evidence_but_not_provider_authority": true,
+    "resolver": "resolve_authoritative_sequence_batches",
+    "fresh_provider": "audit_completed_transport_provider",
+    "recovery_provider": "audit_authoritative_recovery_provider",
+    "provider_selection_must_not_use_path_recency_or_accession_exceptions": true,
+    "recovery_roots_must_be_explicit": true
+  },
+  "normalized_current_batch_evidence": {
+    "type_name": "AuthoritativeSequenceCacheBatchEvidenceV2",
+    "fields": [
+      "batch_id",
+      "source_class",
+      "recovery_class",
+      "provider_summary_name",
+      "provider_summary_payload",
+      "candidate_audit_payload",
+      "component_audit_payload",
+      "package_manifest_name",
+      "package_manifest_payload",
+      "source_partial_name",
+      "recovery_commit",
+      "source_batch_sha256",
+      "source_package_sha256",
+      "recovery_package_sha256",
+      "recovery_summary_sha256",
+      "cause_evidence_sha256",
+      "transport_record_sha256"
+    ],
+    "must_not_contain_absolute_paths": true
+  },
+  "provider_contracts": {
+    "fresh": {
+      "provider_summary_name": "batch-summary.json",
+      "package_manifest_name": "package-files.tsv",
+      "recovery_class": null,
+      "source_partial_name": null,
+      "recovery_commit": null,
+      "source_batch_sha256": null,
+      "source_package_sha256": null,
+      "recovery_package_sha256": null,
+      "recovery_summary_sha256": null,
+      "cause_evidence_sha256": null,
+      "transport_record_sha256": null
+    },
+    "fresh-recovery": {
+      "provider_summary_name": "recovery-summary.json",
+      "package_manifest_name": "recovery-package-files.tsv",
+      "recovery_class_required": true,
+      "source_partial_name_required": true,
+      "recovery_commit_required": true,
+      "source_batch_sha256_required": true,
+      "source_package_sha256_required": true,
+      "recovery_package_sha256_required": true,
+      "recovery_summary_sha256_required": true,
+      "cause_evidence_sha256_required": true,
+      "transport_record_semantics": {
+        "datasets_manifest_omits_requested_gbff": null,
+        "post_snapshot_accession_supersession": "required"
+      }
+    }
+  },
+  "manifest_contract": {
+    "normalized_fields": [
+      "path",
+      "size_bytes",
+      "sha256"
+    ],
+    "ordinary_manifest": "package-files.tsv",
+    "recovery_manifest": "recovery-package-files.tsv",
+    "scientific_candidate_audit_schema_is_shared": true,
+    "scientific_component_audit_schema_is_shared": true,
+    "scientific_package_manifest_row_schema_is_shared": true
+  },
+  "logical_paths": {
+    "fresh_provider_prefix": "sequence-acquisition/{batch_id}/",
+    "fresh_package_prefix": "sequence-acquisition/{batch_id}/package/",
+    "recovery_provider_prefix": "sequence-acquisition-recovery/{recovery_commit}/source-{source_production_commit}/{batch_id}/",
+    "recovery_package_prefix": "sequence-acquisition-recovery/{recovery_commit}/source-{source_production_commit}/{batch_id}/package/",
+    "must_not_project_recovery_into_sequence_acquisition": true
+  },
+  "batch_provenance_v2": {
+    "schema_version": "bacselect-monthly-sequence-cache-batch-provenance-v2",
+    "common_fields": [
+      "accessions_sha256",
+      "batch_id",
+      "source_class",
+      "recovery_class",
+      "cache_origin_release_id",
+      "cache_origin_source_snapshot_id",
+      "cache_origin_source_production_commit",
+      "cache_origin_completion_execution_commit",
+      "cache_origin_execution_commit",
+      "provider_summary",
+      "candidate_audit",
+      "component_audit",
+      "package_manifest",
+      "origin_package_file_readback_sha256",
+      "origin_sequence_acquisition_completion_sha256",
+      "requested_accessions",
+      "source_partial_name",
+      "recovery_commit",
+      "source_batch_sha256",
+      "source_package_sha256",
+      "recovery_package_sha256",
+      "recovery_summary_sha256",
+      "cause_evidence_sha256",
+      "transport_record_sha256",
+      "batch_provenance_sha256"
+    ],
+    "fresh_requires_recovery_fields_null": true,
+    "fresh_recovery_requires_recovery_identity": true,
+    "recovery_class_must_survive_into_catalogue": true
+  },
+  "entries": {
+    "scientific_fields_retained": [
+      "biosample",
+      "canonical_genbank_assembly_accession",
+      "origin_batch_provenance_sha256",
+      "origin_sequence_eligibility",
+      "origin_sequence_exclusion_reasons",
+      "package_artifacts"
+    ],
+    "package_artifact_validation_must_use_origin_batch_provenance": true,
+    "recovery_source_class_need_not_be_duplicated_in_each_entry": true,
+    "new_entry_hash_domain": "bacselect-monthly-sequence-cache-entry-v2",
+    "legacy_v1_entries_must_not_be_rewritten": true
+  },
+  "historical_chain": {
+    "accepted_previous_catalogue_schemas": [
+      "bacselect-monthly-sequence-cache-catalogue-v1",
+      "bacselect-monthly-sequence-cache-catalogue-v2"
+    ],
+    "v1_previous_catalogue_must_be_audited_by_frozen_v1_auditor": true,
+    "v2_previous_catalogue_must_be_audited_by_v2_auditor": true,
+    "carried_v1_entries_must_preserve_original_entry_sha256": true,
+    "carried_v1_batch_provenance_must_preserve_original_batch_provenance_sha256": true,
+    "new_v2_entries_may_replace_same_accession_legacy_entries": true,
+    "no_historical_rehash_or_migration": true,
+    "previous_release_must_be_earlier_than_current": true
+  },
+  "catalogue_v2": {
+    "batch_provenance_may_contain": [
+      "legacy-v1",
+      "v2"
+    ],
+    "entry_population_may_contain": [
+      "carried-legacy-v1",
+      "current-v2"
+    ],
+    "batch_provenance_set_hash_domain": "bacselect-monthly-sequence-cache-batch-provenance-set-v2",
+    "entry_set_hash_domain": "bacselect-monthly-sequence-cache-entry-set-v2",
+    "must_preserve_previous_catalogue_sha256": true,
+    "must_preserve_current_new_replaced_carried_accounting": true
+  },
+  "failure_policy": {
+    "ordinary_and_recovery_provider_for_same_batch": "FAIL",
+    "missing_provider": "FAIL",
+    "unexpected_partial": "FAIL",
+    "completion_provider_mismatch": "FAIL",
+    "source_class_mismatch": "FAIL",
+    "recovery_class_mismatch": "FAIL",
+    "provider_summary_mismatch": "FAIL",
+    "candidate_audit_mismatch": "FAIL",
+    "component_audit_mismatch": "FAIL",
+    "package_manifest_mismatch": "FAIL",
+    "package_readback_mismatch": "FAIL",
+    "historical_chain_ambiguity": "FAIL"
+  },
+  "boundaries": {
+    "cache_v1_must_not_be_modified": true,
+    "completion_v2_must_not_be_modified": true,
+    "recovery_providers_must_not_be_modified": true,
+    "source_partial_must_not_be_modified": true,
+    "ordinary_final_must_not_be_modified": true,
+    "no_network": true,
+    "no_real_recovery": true,
+    "no_cache_publication_during_design_freeze": true,
+    "no_incident_specific_accession_or_batch_logic": true
+  }
+}
