@@ -1533,7 +1533,10 @@ def discover_catalogue_chain_v2(
                 == cache_v1
                 .MONTHLY_SEQUENCE_CACHE_CATALOGUE_SCHEMA
             ):
-                record_commit = record[
+                directory_commit = record[
+                    "origin_git_commit"
+                ]
+                chain_cache_commit = record[
                     "origin_git_commit"
                 ]
 
@@ -1542,7 +1545,10 @@ def discover_catalogue_chain_v2(
                 == cache_v2
                 .MONTHLY_SEQUENCE_CACHE_CATALOGUE_V2_SCHEMA
             ):
-                record_commit = record[
+                directory_commit = record[
+                    "source_production_commit"
+                ]
+                chain_cache_commit = record[
                     "cache_execution_commit"
                 ]
 
@@ -1553,7 +1559,7 @@ def discover_catalogue_chain_v2(
                 )
 
             if (
-                record_commit
+                directory_commit
                 != commit_name
             ):
                 _fail(
@@ -1567,7 +1573,7 @@ def discover_catalogue_chain_v2(
                         release_name
                     ),
                     cache_execution_commit=(
-                        commit_name
+                        chain_cache_commit
                     ),
                     catalogue_path=(
                         catalogue_file

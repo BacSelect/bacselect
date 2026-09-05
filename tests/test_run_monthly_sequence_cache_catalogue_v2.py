@@ -286,7 +286,7 @@ def test_history_accepts_single_v2_catalogue(
     )
 
     commit = kwargs[
-        "cache_execution_commit"
+        "source_production_commit"
     ]
 
     write_catalogue(
@@ -324,6 +324,97 @@ def test_history_accepts_single_v2_catalogue(
         .MONTHLY_SEQUENCE_CACHE_CATALOGUE_V2_SCHEMA
     )
 
+    assert (
+        kwargs[
+            "source_production_commit"
+        ]
+        != kwargs[
+            "cache_execution_commit"
+        ]
+    )
+
+    assert (
+        chain[
+            0
+        ].cache_execution_commit
+        == kwargs[
+            "cache_execution_commit"
+        ]
+    )
+
+    assert (
+        module.chain_signature(
+            chain
+        )[
+            0
+        ][
+            1
+        ]
+        == kwargs[
+            "cache_execution_commit"
+        ]
+    )
+
+
+def test_history_rejects_v2_source_directory_mismatch(
+    tmp_path,
+):
+    values = (
+        make_current_values()
+    )
+
+    kwargs = (
+        make_core_kwargs(
+            values
+        )
+    )
+
+    assert (
+        kwargs[
+            "source_production_commit"
+        ]
+        != kwargs[
+            "cache_execution_commit"
+        ]
+    )
+
+    payload = (
+        cache_v2
+        .serialize_sequence_cache_catalogue_v2(
+            **kwargs
+        )
+    )
+
+    write_catalogue(
+        tmp_path,
+        release=(
+            kwargs[
+                "release_id"
+            ]
+        ),
+        commit=(
+            kwargs[
+                "cache_execution_commit"
+            ]
+        ),
+        name=(
+            module.CATALOGUE_V2_NAME
+        ),
+        payload=payload,
+    )
+
+    with pytest.raises(
+        module.MonthlySequenceCacheCatalogueV2ExecutionError,
+        match=(
+            "historical catalogue Git identity "
+            "differs from directory identity"
+        ),
+    ):
+        module.discover_catalogue_chain_v2(
+            tmp_path,
+            current_release_id="2032.05",
+        )
+
 
 def test_history_rejects_v1_and_v2_same_commit(
     tmp_path,
@@ -353,7 +444,7 @@ def test_history_rejects_v1_and_v2_same_commit(
     )
 
     commit = kwargs[
-        "cache_execution_commit"
+        "source_production_commit"
     ]
 
     write_catalogue(
@@ -436,6 +527,8 @@ def test_history_rejects_multiple_catalogues_one_release(
     records = {
         first_payload:
             {
+                "source_production_commit":
+                    first_commit,
                 "cache_execution_commit":
                     first_commit,
                 "catalogue_mode":
@@ -454,6 +547,8 @@ def test_history_rejects_multiple_catalogues_one_release(
             },
         second_payload:
             {
+                "source_production_commit":
+                    second_commit,
                 "cache_execution_commit":
                     second_commit,
                 "catalogue_mode":
@@ -523,7 +618,7 @@ def test_history_rejects_current_without_include(
         ),
         commit=(
             kwargs[
-                "cache_execution_commit"
+                "source_production_commit"
             ]
         ),
         name=(
@@ -575,7 +670,7 @@ def test_history_rejects_later_release(
         ),
         commit=(
             kwargs[
-                "cache_execution_commit"
+                "source_production_commit"
             ]
         ),
         name=(
@@ -690,7 +785,7 @@ def test_execute_genesis_with_injected_audited_context(
         / "2032.04"
         / "production"
         / (
-            "c"
+            "a"
             * 40
         )
     )
@@ -813,7 +908,7 @@ def test_execute_rejects_context_commit_mismatch(
         / "2032.04"
         / "production"
         / (
-            "c"
+            "a"
             * 40
         )
     )
@@ -1071,7 +1166,7 @@ def test_history_accepts_mixed_v1_to_v2_chain(
         ),
         commit=(
             kwargs[
-                "cache_execution_commit"
+                "source_production_commit"
             ]
         ),
         name=(
@@ -1226,7 +1321,7 @@ def test_history_rejects_valid_catalogues_with_broken_predecessor_sha(
         ),
         commit=(
             kwargs[
-                "cache_execution_commit"
+                "source_production_commit"
             ]
         ),
         name=(
