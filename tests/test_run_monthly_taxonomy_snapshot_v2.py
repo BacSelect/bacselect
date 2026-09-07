@@ -745,3 +745,100 @@ def test_canonical_stage6_inventory_is_exact(
             stage,
             expected=expected,
         )
+
+
+def test_stage6_v2_completion_audit_supplies_stage5_execution():
+    tree = ast.parse(
+        WRAPPER_PATH.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    target_function = next(
+        node
+        for node in tree.body
+        if (
+            isinstance(
+                node,
+                ast.FunctionDef,
+            )
+            and node.name
+            == "authenticate_stage6_v2"
+        )
+    )
+
+    assignments = []
+
+    for node in ast.walk(
+        target_function
+    ):
+        if not isinstance(
+            node,
+            ast.Assign,
+        ):
+            continue
+
+        if any(
+            isinstance(
+                target,
+                ast.Name,
+            )
+            and target.id
+            == "completion_kwargs"
+            for target in node.targets
+        ):
+            assignments.append(
+                node
+            )
+
+    assert len(
+        assignments
+    ) == 1
+
+    value = assignments[
+        0
+    ].value
+
+    assert isinstance(
+        value,
+        ast.Dict,
+    )
+
+    entries = {}
+
+    for key, item in zip(
+        value.keys,
+        value.values,
+    ):
+        if (
+            isinstance(
+                key,
+                ast.Constant,
+            )
+            and isinstance(
+                key.value,
+                str,
+            )
+        ):
+            entries[
+                key.value
+            ] = item
+
+    assert (
+        "stage5_execution"
+        in entries
+    )
+
+    supplied = entries[
+        "stage5_execution"
+    ]
+
+    assert isinstance(
+        supplied,
+        ast.Name,
+    )
+
+    assert (
+        supplied.id
+        == "stage5_v1"
+    )

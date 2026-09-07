@@ -467,6 +467,13 @@ def authenticate_stage6_v2(
         )
     )
 
+    stage5_v1 = (
+        stage5_v2
+        .load_stage5_v1(
+            root
+        )
+    )
+
     stage4_v2 = (
         stage5_v2
         .load_stage4_v2(
@@ -796,6 +803,8 @@ def authenticate_stage6_v2(
             decisions_sha,
         "record_sha256":
             record_sha,
+        "stage5_execution":
+            stage5_v1,
     }
 
     stage4 = (
