@@ -814,3 +814,51 @@ def test_wrapper_contains_no_later_stage_dispatch():
 
     for token in forbidden:
         assert token not in text
+
+
+def test_production_sha_bindings_are_exact_and_canonical():
+    expected = {
+        "EXPECTED_STAGE10_MATRIX_SHA256":
+            "36d17d35bf245d43d0b1884db5311354b63383dbef5062ef6ea1aab1d48dab0a",
+        "EXPECTED_STAGE10_PROVENANCE_SHA256":
+            "316e9f0c5e9a3e8e69cd7ecc9c2273cd2b43b3ae4b5af00d2e3c2699e1a584fd",
+        "EXPECTED_STAGE10_RECORD_SHA256":
+            "683d1b8d7d879f525ea9f5d68144fca0dbb54660e67c72ad8f1682d037605db0",
+        "EXPECTED_STAGE10_COMPLETION_SHA256":
+            "9c40b8eda35be55280cc16034980701a32c2521767fc4a8203d654a8884e32fe",
+        "EXPECTED_STAGE10_RAW_NUMERIC_ARRAY_SHA256":
+            "c7049f056a839a0aee24d57c3d4f4109e16a8eb659d8c2a9b904b1ae9cd8fc36",
+        "EXPECTED_MEMBERSHIP_SHA256":
+            "6e6b44bd598bf472ea2a74686aaabcd23058832938279fb13a4d8ae6cdf7607d",
+        "EXPECTED_MONTHLY_GEOMETRY_CORE_SHA256":
+            "ac8bbc94a2bacae8c8e80de1f5a9d65be886d59a2e72386ce82de8a5da23297e",
+        "EXPECTED_MONTHLY_GEOMETRY_TEST_SHA256":
+            "17d7f94e54b2b778d0774617fe5d7285d4c5a394e704306a84b67e917a615595",
+        "EXPECTED_GEOMETRY_SHA256":
+            "fbebf436d049be063817b717878330f38e09b3e7cb79f9dbc1b8f704af6a0d69",
+        "EXPECTED_GEOMETRY_TEST_SHA256":
+            "8c215ea881985a8d7fd83b59ee3a9ce4e1ebe5a0ffe64352d2077f098ecedec1",
+        "EXPECTED_ENVIRONMENT_LOCK_SHA256":
+            "f6f4a19c44a759705682ba4199207eaef5c2435e1b6feeddc1e4654686bc2a8c",
+    }
+
+    for name, frozen in expected.items():
+        observed = getattr(
+            module,
+            name,
+        )
+
+        assert observed == frozen
+        assert len(observed) == 64
+        assert observed == observed.lower()
+        assert all(
+            character in "0123456789abcdef"
+            for character in observed
+        )
+
+    assert (
+        module.PRODUCTION_EXPECTATIONS.membership_sha256
+        == expected[
+            "EXPECTED_MEMBERSHIP_SHA256"
+        ]
+    )
