@@ -539,6 +539,14 @@ def test_slurm_parallel_contract():
         encoding="utf-8"
     )
 
+    pythonpath_export = (
+        'export PYTHONPATH="$REPO/src${PYTHONPATH:+:$PYTHONPATH}"'
+    )
+
+    assert pythonpath_export in worker
+    assert pythonpath_export in aggregate
+    assert pythonpath_export in submit
+
     assert "#SBATCH --partition=prod" in worker
     assert "#SBATCH --cpus-per-task=1" in worker
     assert "#SBATCH --mem=4G" in worker

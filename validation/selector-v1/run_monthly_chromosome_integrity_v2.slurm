@@ -18,6 +18,7 @@ fail() {
 REPO="$HOME/github/bacselect-monthly-gbff-recovery"
 SOURCE_REPO="$HOME/github/bacselect"
 PY="$HOME/.conda/envs/bacselect-dev/bin/python"
+export PYTHONPATH="$REPO/src${PYTHONPATH:+:$PYTHONPATH}"
 
 PARALLEL="$REPO/validation/selector-v1/run_monthly_chromosome_integrity_v2_parallel.py"
 
