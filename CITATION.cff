@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: >-
+  If you use a dated BacSelect panel, please cite the corresponding
+  version-specific Zenodo dataset release. The preferred citation below is
+  the current BacSelect release.
+title: "BacSelect"
+type: software
+authors:
+  - family-names: "White"
+    given-names: "Rhys"
+    orcid: "https://orcid.org/0000-0001-6620-758X"
+    affiliation: "The New Zealand Institute for Public Health and Forensic Science"
+abstract: >-
+  BacSelect is a reproducible system for selecting compact, nested panels of
+  complete bacterial genome assemblies that span genome architecture.
+repository-code: "https://github.com/BacSelect/bacselect"
+url: "https://bacselect.github.io/"
+preferred-citation:
+  type: data
+  authors:
+    - family-names: "White"
+      given-names: "Rhys"
+      orcid: "https://orcid.org/0000-0001-6620-758X"
+      affiliation: "The New Zealand Institute for Public Health and Forensic Science"
+  title: "BacSelect 2026.09: bacterial genome diversity panels"
+  doi: "10.5281/zenodo.22658842"
+  version: "2026.09"
+  year: 2026
+  month: 9
+  url: "https://doi.org/10.5281/zenodo.22658842"

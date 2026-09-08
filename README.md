@@ -32,6 +32,26 @@ Dated public release artefacts are published through the BacSelect website;
 this repository contains the scientific implementation, specifications,
 validation evidence and automated tests.
 
+## Citation
+
+For analyses using a dated BacSelect panel, cite the **version-specific Zenodo
+release corresponding to the panel used**.
+
+For BacSelect 2026.09:
+
+**White R. BacSelect 2026.09: bacterial genome diversity panels. Zenodo.
+https://doi.org/10.5281/zenodo.22658842**
+
+The stable BacSelect concept DOI is:
+
+**https://doi.org/10.5281/zenodo.22658841**
+
+Use the concept DOI when referring to BacSelect generally. For reproducible
+analyses, cite the version-specific DOI for the exact BacSelect release used.
+
+GitHub citation metadata are provided in `CITATION.cff`; its preferred citation
+tracks the current dated BacSelect dataset release.
+
 ## Validated Selector v1 foundation
 
 The Selector v1 validation foundation is distinct from the current monthly
