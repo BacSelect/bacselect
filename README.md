@@ -93,3 +93,12 @@ that release's complete OPS ladder.
 ## Website
 
 https://bacselect.github.io
+
+## Licence
+
+BacSelect-authored software in this repository is released under the
+[MIT License](LICENSE).
+
+This licence does not alter the terms applying to third-party source data.
+BacSelect does not claim ownership of or relicense underlying genome records
+obtained from public archives.

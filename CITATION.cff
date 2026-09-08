@@ -5,6 +5,7 @@ message: >-
   the current BacSelect release.
 title: "BacSelect"
 type: software
+license: "MIT"
 authors:
   - family-names: "White"
     given-names: "Rhys"
