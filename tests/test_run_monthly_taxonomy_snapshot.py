@@ -993,11 +993,14 @@ def test_owned_file_cleanup_refuses_replacement(
     )
 
     observed = path.stat()
+    observed_sha256 = module.sha256_file(
+        path
+    )
 
     path.unlink()
 
     path.write_bytes(
-        b"replacement"
+        b"other"
     )
 
     with pytest.raises(
@@ -1012,10 +1015,16 @@ def test_owned_file_cleanup_refuses_replacement(
             inode=(
                 observed.st_ino
             ),
+            size_bytes=(
+                observed.st_size
+            ),
+            expected_sha256=(
+                observed_sha256
+            ),
             label="synthetic",
         )
 
-    assert path.read_bytes() == b"replacement"
+    assert path.read_bytes() == b"other"
 
 
 def test_stage6_count_derivation():

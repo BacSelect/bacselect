@@ -659,6 +659,8 @@ def _remove_owned_file(
     *,
     device: int,
     inode: int,
+    size_bytes: int,
+    expected_sha256: str,
 ) -> None:
     if not os.path.lexists(
         path
@@ -678,6 +680,33 @@ def _remove_owned_file(
     if (
         observed.st_dev != device
         or observed.st_ino != inode
+        or observed.st_size != size_bytes
+    ):
+        raise MonthlyTaxonomyExecutionError(
+            "temporary cleanup target identity changed"
+        )
+
+    observed_sha256 = (
+        source_taxonomy_acquisition
+        .sha256_file(
+            path
+        )
+    )
+
+    if observed_sha256 != _sha256(
+        expected_sha256,
+        label="temporary cleanup SHA256",
+    ):
+        raise MonthlyTaxonomyExecutionError(
+            "temporary cleanup target identity changed"
+        )
+
+    observed_after_hash = path.stat()
+
+    if (
+        observed_after_hash.st_dev != device
+        or observed_after_hash.st_ino != inode
+        or observed_after_hash.st_size != size_bytes
     ):
         raise MonthlyTaxonomyExecutionError(
             "temporary cleanup target identity changed"
@@ -1103,6 +1132,8 @@ def _publish_file_to_key(
                     inode=(
                         temporary_stat.st_ino
                     ),
+                    size_bytes=expected_size,
+                    expected_sha256=expected_sha,
                 )
             except Exception as exc:
                 cleanup_errors.append(
@@ -1130,6 +1161,8 @@ def _publish_file_to_key(
             inode=(
                 temporary_stat.st_ino
             ),
+            size_bytes=expected_size,
+            expected_sha256=expected_sha,
         )
 
         _fsync_directory(
@@ -1276,6 +1309,8 @@ def _publish_bytes_to_key(
                     inode=(
                         temporary_stat.st_ino
                     ),
+                    size_bytes=len(payload),
+                    expected_sha256=digest,
                 )
             except Exception as exc:
                 cleanup_errors.append(
@@ -1304,6 +1339,8 @@ def _publish_bytes_to_key(
             inode=(
                 temporary_stat.st_ino
             ),
+            size_bytes=len(payload),
+            expected_sha256=digest,
         )
 
         _fsync_directory(

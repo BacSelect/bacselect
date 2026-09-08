@@ -2133,6 +2133,8 @@ def _remove_owned_file(
     path: Path,
     device: int,
     inode: int,
+    size_bytes: int,
+    expected_sha256: str,
     label: str,
 ) -> None:
     """Remove one executor-created file only if its identity is unchanged."""
@@ -2160,6 +2162,34 @@ def _remove_owned_file(
     if (
         observed.st_dev != device
         or observed.st_ino != inode
+        or observed.st_size != size_bytes
+    ):
+        raise MonthlyChromosomeExecutionError(
+            f"{label} cleanup target identity changed"
+        )
+
+    try:
+        observed_sha256 = sha256_file(
+            path
+        )
+
+        observed_after_hash = (
+            path.stat()
+        )
+    except OSError as exc:
+        raise MonthlyChromosomeExecutionError(
+            f"{label} cleanup identity check failed"
+        ) from exc
+
+    if observed_sha256 != expected_sha256:
+        raise MonthlyChromosomeExecutionError(
+            f"{label} cleanup target identity changed"
+        )
+
+    if (
+        observed_after_hash.st_dev != device
+        or observed_after_hash.st_ino != inode
+        or observed_after_hash.st_size != size_bytes
     ):
         raise MonthlyChromosomeExecutionError(
             f"{label} cleanup target identity changed"
@@ -2442,6 +2472,14 @@ def publish_completion(
             "chromosome completion temporary artifact already exists"
         )
 
+    payload_size = len(
+        payload
+    )
+
+    payload_sha256 = hashlib.sha256(
+        payload
+    ).hexdigest()
+
     stage5_execution.write_no_clobber(
         temporary,
         payload,
@@ -2541,6 +2579,8 @@ def publish_completion(
                     inode=(
                         temporary_stat.st_ino
                     ),
+                    size_bytes=payload_size,
+                    expected_sha256=payload_sha256,
                     label=(
                         "temporary chromosome completion"
                     ),
@@ -2567,7 +2607,20 @@ def publish_completion(
 
         raise
 
-    temporary.unlink()
+    _remove_owned_file(
+        path=temporary,
+        device=(
+            temporary_stat.st_dev
+        ),
+        inode=(
+            temporary_stat.st_ino
+        ),
+        size_bytes=payload_size,
+        expected_sha256=payload_sha256,
+        label=(
+            "temporary chromosome completion"
+        ),
+    )
 
     stage5_execution.fsync_directory(
         stage1_root

@@ -1341,6 +1341,56 @@ def test_publish_completion_cleans_failed_publication(
     ).exists()
 
 
+def test_owned_file_cleanup_refuses_replacement(
+    tmp_path,
+):
+    module = load_module()
+
+    path = (
+        tmp_path
+        / "owned"
+    )
+
+    path.write_bytes(
+        b"first"
+    )
+
+    observed = path.stat()
+    expected_sha256 = hashlib.sha256(
+        b"first"
+    ).hexdigest()
+
+    path.unlink()
+
+    # Same size as the original: size alone cannot detect replacement.
+    path.write_bytes(
+        b"other"
+    )
+
+    with pytest.raises(
+        module.MonthlyChromosomeExecutionError,
+        match="identity changed",
+    ):
+        module._remove_owned_file(
+            path=path,
+            device=(
+                observed.st_dev
+            ),
+            inode=(
+                observed.st_ino
+            ),
+            size_bytes=(
+                observed.st_size
+            ),
+            expected_sha256=(
+                expected_sha256
+            ),
+            label="synthetic",
+        )
+
+    assert path.read_bytes() == b"other"
+
+
 def test_owned_hard_link_cleanup_refuses_unrelated_file(
     tmp_path,
 ):

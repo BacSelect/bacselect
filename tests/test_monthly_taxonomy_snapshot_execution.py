@@ -402,6 +402,53 @@ def successful_execution(
     )
 
 
+def test_owned_file_cleanup_refuses_replacement(
+    tmp_path,
+):
+    path = (
+        tmp_path
+        / "owned"
+    )
+
+    path.write_bytes(
+        b"first"
+    )
+
+    observed = path.stat()
+    expected_sha256 = hashlib.sha256(
+        b"first"
+    ).hexdigest()
+
+    path.unlink()
+
+    # Same length as the original: size alone cannot detect replacement.
+    path.write_bytes(
+        b"other"
+    )
+
+    with pytest.raises(
+        module.MonthlyTaxonomyExecutionError,
+        match="identity changed",
+    ):
+        module._remove_owned_file(
+            path,
+            device=(
+                observed.st_dev
+            ),
+            inode=(
+                observed.st_ino
+            ),
+            size_bytes=(
+                observed.st_size
+            ),
+            expected_sha256=(
+                expected_sha256
+            ),
+        )
+
+    assert path.read_bytes() == b"other"
+
+
 def test_authenticated_upstream_is_frozen():
     value = upstream()
 

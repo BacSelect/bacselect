@@ -70,8 +70,8 @@ EXPECTED_EXECUTION_METHOD_SHA256 = (
 )
 
 EXPECTED_EXECUTION_SUPPORT_SHA256 = (
-    "4cb58becd9b1dc6428f0614262c0d55c"
-    "05673395dc41acdf358ff251d990e263"
+    "2450e134f4fcadaa082038c823918b32"
+    "da56ee96688d15a5a37d94b0f9c1b875"
 )
 
 FROZEN_DEPENDENCIES = {
@@ -602,6 +602,8 @@ def _remove_owned_file(
     path: Path,
     device: int,
     inode: int,
+    size_bytes: int,
+    expected_sha256: str,
     label: str,
 ) -> None:
     if not os.path.lexists(
@@ -622,6 +624,30 @@ def _remove_owned_file(
     if (
         observed.st_dev != device
         or observed.st_ino != inode
+        or observed.st_size != size_bytes
+    ):
+        raise MonthlyTaxonomyWrapperError(
+            f"{label} cleanup target identity changed"
+        )
+
+    observed_sha256 = sha256_file(
+        path
+    )
+
+    if observed_sha256 != _sha256(
+        expected_sha256,
+        label=f"{label} cleanup SHA256",
+    ):
+        raise MonthlyTaxonomyWrapperError(
+            f"{label} cleanup target identity changed"
+        )
+
+    observed_after_hash = path.stat()
+
+    if (
+        observed_after_hash.st_dev != device
+        or observed_after_hash.st_ino != inode
+        or observed_after_hash.st_size != size_bytes
     ):
         raise MonthlyTaxonomyWrapperError(
             f"{label} cleanup target identity changed"
@@ -1932,6 +1958,8 @@ def audit_stage_directory(
     tuple[
         int,
         int,
+        int,
+        str,
     ],
 ]:
     directory = (
@@ -1995,6 +2023,8 @@ def audit_stage_directory(
         ] = (
             stat.st_dev,
             stat.st_ino,
+            stat.st_size,
+            observed_sha,
         )
 
     return identities
@@ -2087,11 +2117,14 @@ def publish_stage(
                 destination.stat()
             )
 
-            source_device, source_inode = (
-                partial_identities[
-                    name
-                ]
-            )
+            (
+                source_device,
+                source_inode,
+                source_size,
+                source_sha256,
+            ) = partial_identities[
+                name
+            ]
 
             if (
                 observed.st_dev != source_device
@@ -2107,6 +2140,8 @@ def publish_stage(
             ] = (
                 observed.st_dev,
                 observed.st_ino,
+                source_size,
+                source_sha256,
             )
 
         _fsync_directory(
@@ -2126,11 +2161,14 @@ def publish_stage(
             monthly_taxonomy_snapshot_execution
             .LOCAL_STAGE_FILES
         ):
-            device, inode = (
-                partial_identities[
-                    name
-                ]
-            )
+            (
+                device,
+                inode,
+                size_bytes,
+                expected_sha256,
+            ) = partial_identities[
+                name
+            ]
 
             _remove_owned_file(
                 path=(
@@ -2139,6 +2177,8 @@ def publish_stage(
                 ),
                 device=device,
                 inode=inode,
+                size_bytes=size_bytes,
+                expected_sha256=expected_sha256,
                 label=(
                     f"partial Stage 7 artifact {name}"
                 ),
@@ -2180,6 +2220,8 @@ def publish_stage(
         for name, (
             device,
             inode,
+            size_bytes,
+            expected_sha256,
         ) in reversed(
             tuple(
                 linked.items()
@@ -2193,6 +2235,8 @@ def publish_stage(
                     ),
                     device=device,
                     inode=inode,
+                    size_bytes=size_bytes,
+                    expected_sha256=expected_sha256,
                     label=(
                         f"published Stage 7 artifact {name}"
                     ),
@@ -2284,6 +2328,10 @@ def publish_completion(
             "taxonomy completion temporary artifact already exists"
         )
 
+    payload_sha256 = sha256_bytes(
+        payload
+    )
+
     _write_no_clobber(
         temporary,
         payload,
@@ -2370,6 +2418,8 @@ def publish_completion(
                     inode=(
                         final_stat.st_ino
                     ),
+                    size_bytes=len(payload),
+                    expected_sha256=payload_sha256,
                     label=(
                         "published taxonomy completion"
                     ),
@@ -2391,6 +2441,8 @@ def publish_completion(
                     inode=(
                         temporary_stat.st_ino
                     ),
+                    size_bytes=len(payload),
+                    expected_sha256=payload_sha256,
                     label=(
                         "temporary taxonomy completion"
                     ),
@@ -2425,6 +2477,8 @@ def publish_completion(
         inode=(
             temporary_stat.st_ino
         ),
+        size_bytes=len(payload),
+        expected_sha256=payload_sha256,
         label="temporary taxonomy completion",
     )
 
