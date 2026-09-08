@@ -94,7 +94,7 @@ explored during Genomics Aotearoa-supported research. Genomics Aotearoa does
 not operate or maintain BacSelect, and BacSelect is not an official Genomics
 Aotearoa product.
 
-LLMs and coding agents have been used extensively as development tools,
+LLMs and coding agents have been used as development tools,
 including for implementation, debugging, refactoring, testing and
 documentation. Scientific design, validation criteria, interpretation and
 responsibility for released BacSelect artefacts remain with the developer.
