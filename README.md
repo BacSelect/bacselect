@@ -94,6 +94,14 @@ that release's complete OPS ladder.
 
 https://bacselect.github.io
 
+## Methods and third-party software
+
+Scholarly method and software references are recorded in
+[`docs/methods-and-software-references.md`](docs/methods-and-software-references.md).
+
+Third-party software and licence information is recorded in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
 ## Licence
 
 BacSelect-authored software in this repository is released under the
