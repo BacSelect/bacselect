@@ -19,6 +19,20 @@ whole. BacSelect additionally defines its own biological feature geometry,
 species-representative restriction, deterministic initialisation, tie
 handling, nested panel construction, and release framework.
 
+## Circular sequence canonicalisation
+
+BacSelect canonicalises circular replicon sequences using a linear-time
+lexicographically minimal circular-rotation procedure. This belongs to the
+classical lexicographically least circular substring problem described by:
+
+Booth KS. Lexicographically least circular substrings.
+Information Processing Letters. 1980;10(4-5):240-242.
+https://doi.org/10.1016/0020-0190(80)90149-0
+
+BacSelect combines circular-rotation canonicalisation with reverse-complement
+canonicalisation to obtain a topology-aware representation for sequence
+fingerprinting.
+
 ## NCBI Datasets
 
 BacSelect uses NCBI Datasets as its assembly discovery and retrieval
