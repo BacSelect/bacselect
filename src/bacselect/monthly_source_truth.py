@@ -813,6 +813,43 @@ def _population_from_audited_catalogue(
     )
 
 
+def build_monthly_source_truth_population_from_audited_catalogue(
+    catalogue_record: Mapping[
+        str,
+        object,
+    ],
+    *,
+    catalogue_sha256: str,
+    current_metadata: Mapping[
+        str,
+        str,
+    ],
+    release_id: str,
+    source_snapshot_id: str,
+    origin_git_commit: str,
+) -> MonthlySourceTruthPopulation:
+    """Build Stage 4 membership from an already-audited cache catalogue."""
+
+    return _population_from_audited_catalogue(
+        catalogue_record,
+        catalogue_sha256=(
+            catalogue_sha256
+        ),
+        current_metadata=(
+            current_metadata
+        ),
+        release_id=(
+            release_id
+        ),
+        source_snapshot_id=(
+            source_snapshot_id
+        ),
+        origin_git_commit=(
+            origin_git_commit
+        ),
+    )
+
+
 def build_monthly_source_truth_population(
     catalogue_payload: bytes,
     *,
@@ -1700,6 +1737,179 @@ def audit_monthly_source_truth_record(
     population = (
         build_monthly_source_truth_population(
             catalogue_payload,
+            current_metadata=(
+                current_metadata
+            ),
+            release_id=(
+                release_id
+            ),
+            source_snapshot_id=(
+                source_snapshot_id
+            ),
+            origin_git_commit=(
+                origin_git_commit
+            ),
+        )
+    )
+
+    decision_values = (
+        audit_monthly_source_truth_decisions(
+            decisions_payload
+        )
+    )
+
+    relation_values = (
+        audit_monthly_source_truth_relations(
+            relations_payload
+        )
+    )
+
+    expected = _record_from_rows(
+        population,
+        metadata_record_sha256=(
+            metadata_record_sha256
+        ),
+        metadata_completion_sha256=(
+            metadata_completion_sha256
+        ),
+        decisions_payload=(
+            decisions_payload
+        ),
+        decision_values=(
+            decision_values
+        ),
+        relations_payload=(
+            relations_payload
+        ),
+        relation_values=(
+            relation_values
+        ),
+    )
+
+    if value != expected:
+        raise MonthlySourceTruthError(
+            "monthly source-truth record changed"
+        )
+
+    if value[
+        "schema_version"
+    ] != MONTHLY_SOURCE_TRUTH_RECORD_SCHEMA:
+        raise MonthlySourceTruthError(
+            "monthly source-truth record schema changed"
+        )
+
+    if value[
+        "status"
+    ] != MONTHLY_SOURCE_TRUTH_STATUS:
+        raise MonthlySourceTruthError(
+            "monthly source-truth record status changed"
+        )
+
+    retained = _nonnegative_int(
+        value[
+            "retained_count"
+        ],
+        label="retained count",
+    )
+
+    eligible = _nonnegative_int(
+        value[
+            "sequence_eligible_count"
+        ],
+        label="sequence-eligible count",
+    )
+
+    ineligible = _nonnegative_int(
+        value[
+            "sequence_ineligible_count"
+        ],
+        label="sequence-ineligible count",
+    )
+
+    if retained != (
+        eligible
+        + ineligible
+    ):
+        raise MonthlySourceTruthError(
+            "monthly sequence-eligibility accounting changed"
+        )
+
+    if value[
+        "decision_count"
+    ] != eligible:
+        raise MonthlySourceTruthError(
+            "source-truth decision count differs from eligible count"
+        )
+
+    return value
+
+
+def audit_monthly_source_truth_record_from_audited_catalogue(
+    payload: bytes,
+    *,
+    catalogue_record: Mapping[
+        str,
+        object,
+    ],
+    catalogue_sha256: str,
+    current_metadata: Mapping[
+        str,
+        str,
+    ],
+    release_id: str,
+    source_snapshot_id: str,
+    origin_git_commit: str,
+    metadata_record_sha256: str,
+    metadata_completion_sha256: str,
+    decisions_payload: bytes,
+    relations_payload: bytes,
+) -> Mapping[
+    str,
+    object,
+]:
+    if not isinstance(
+        payload,
+        bytes,
+    ):
+        raise TypeError(
+            "monthly source-truth record must be bytes"
+        )
+
+    try:
+        value = json.loads(
+            payload.decode(
+                "ascii"
+            )
+        )
+    except (
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+    ) as exc:
+        raise MonthlySourceTruthError(
+            "invalid monthly source-truth record JSON"
+        ) from exc
+
+    if not isinstance(
+        value,
+        dict,
+    ):
+        raise MonthlySourceTruthError(
+            "monthly source-truth record must be a JSON object"
+        )
+
+    if _canonical_json_bytes(
+        value
+    ) != payload:
+        raise MonthlySourceTruthError(
+            "monthly source-truth record is not canonical JSON"
+        )
+
+    population = (
+        build_monthly_source_truth_population_from_audited_catalogue(
+            catalogue_record,
+            catalogue_sha256=(
+                catalogue_sha256
+            ),
             current_metadata=(
                 current_metadata
             ),
